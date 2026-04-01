@@ -1,7 +1,6 @@
 export const SEO_ROUTE_SLUGS = [
   'trichy-to-chennai',
   'trichy-to-madurai',
-  'trichy-to-coimbatore',
   'trichy-to-salem',
   'trichy-to-villupuram',
   'trichy-to-thanjavur',

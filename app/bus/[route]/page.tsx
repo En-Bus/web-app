@@ -74,6 +74,11 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
   const fromName = toDisplayName(fromSlug);
   const toName = toDisplayName(toSlug);
   const searchState = await fetchSearchResults(fromSlug, toSlug, '');
+  const hasResults = Boolean(searchState.data?.results?.length);
+
+  if (!searchState.error && !hasResults) {
+    notFound();
+  }
   const seoSuggestions = SEO_ROUTE_SLUGS.filter((slug) => slug.startsWith(`${fromSlug}-to-`))
     .map((slug) => parseBusRouteSlug(slug))
     .filter((parsed): parsed is { fromSlug: string; toSlug: string } => Boolean(parsed))
