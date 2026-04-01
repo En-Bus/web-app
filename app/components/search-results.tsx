@@ -20,11 +20,14 @@ export function SearchResults({
   showSeoLink = true,
 }: SearchResultsProps) {
   const seoHref = `/bus/${fromSlug}-to-${toSlug}`;
+  const canShowSeoLink = showSeoLink && results.length > 0;
 
   return (
     <section className="space-y-4">
-      <p className="text-sm text-neutral-600">Showing {results.length} results.</p>
-      {showSeoLink ? (
+      {results.length > 0 ? (
+        <p className="text-sm text-neutral-600">Showing {results.length} results.</p>
+      ) : null}
+      {canShowSeoLink ? (
         <p className="text-sm text-neutral-600">
           SEO page:{' '}
           <Link href={seoHref} className="text-neutral-900 underline underline-offset-2">

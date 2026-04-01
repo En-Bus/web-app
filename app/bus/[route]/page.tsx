@@ -10,6 +10,7 @@ import {
   toDisplayName,
 } from '../../lib/bus-search';
 import { SearchResults } from '../../components/search-results';
+import { SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
 type BusRoutePageProps = {
   params: Promise<{
@@ -19,7 +20,6 @@ type BusRoutePageProps = {
 
 const POPULAR_DESTINATIONS = [
   { slug: 'chennai', name: 'Chennai' },
-  { slug: 'trichy', name: 'Trichy' },
   { slug: 'madurai', name: 'Madurai' },
   { slug: 'salem', name: 'Salem' },
   { slug: 'coimbatore', name: 'Coimbatore' },
@@ -42,6 +42,13 @@ export async function generateMetadata({
   const fromName = toDisplayName(parsed.fromSlug);
   const toName = toDisplayName(parsed.toSlug);
 
+  if (parsed.fromSlug === parsed.toSlug) {
+    return {
+      title: 'Bus Timings',
+      description: 'Find Tamil Nadu bus timings and route details.',
+    };
+  }
+
   return {
     title: `${fromName} to ${toName} Bus Timings | TN Bus Finder`,
     description: `Check buses from ${fromName} to ${toName} with timings, routes, and stops. Find TNSTC and SETC buses easily.`,
@@ -59,16 +66,31 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     notFound();
   }
 
+  if (parsed.fromSlug === parsed.toSlug) {
+    notFound();
+  }
+
   const { fromSlug, toSlug } = parsed;
   const fromName = toDisplayName(fromSlug);
   const toName = toDisplayName(toSlug);
   const searchState = await fetchSearchResults(fromSlug, toSlug, '');
-  const popularRoutes = POPULAR_DESTINATIONS.filter(
-    (destination) => destination.slug !== toSlug,
+  const seoSuggestions = SEO_ROUTE_SLUGS.filter((slug) => slug.startsWith(`${fromSlug}-to-`))
+    .map((slug) => parseBusRouteSlug(slug))
+    .filter((parsed): parsed is { fromSlug: string; toSlug: string } => Boolean(parsed))
+    .filter((parsed) => parsed.toSlug !== toSlug && parsed.toSlug !== fromSlug)
+    .map((parsed) => ({
+      href: `/bus/${buildBusRouteSlug(fromSlug, parsed.toSlug)}`,
+      label: `${fromName} to ${toDisplayName(parsed.toSlug)} bus timings`,
+    }));
+
+  const curatedFallback = POPULAR_DESTINATIONS.filter(
+    (destination) => destination.slug !== toSlug && destination.slug !== fromSlug,
   ).map((destination) => ({
     href: `/bus/${buildBusRouteSlug(fromSlug, destination.slug)}`,
     label: `${fromName} to ${destination.name} bus timings`,
-  })).slice(0, 5);
+  }));
+
+  const popularRoutes = [...seoSuggestions, ...curatedFallback].slice(0, 5);
 
   if (searchState.error) {
     return (
