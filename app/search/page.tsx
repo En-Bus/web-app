@@ -102,13 +102,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               Results for {toDisplayName(normalizedFrom)} to{' '}
               {toDisplayName(normalizedTo)}
             </h2>
-            <SearchResults
-              fromSlug={normalizedFrom}
-              toSlug={normalizedTo}
-              results={searchState.data.results}
-              showSeoLink={Boolean(searchState.data.results.length)}
-            />
-          </section>
+              <SearchResults
+                fromSlug={normalizedFrom}
+                toSlug={normalizedTo}
+                results={searchState.data?.results ?? []}
+                showSeoLink={Boolean(searchState.data?.results?.length)}
+              />
+            </section>
         ) : null}
 
         {searchState.data && !hasResults && !isSelfRoute ? (
