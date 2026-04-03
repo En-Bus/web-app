@@ -1,8 +1,11 @@
 const API_BASE_URL =
+  process.env.SEARCH_API_BASE_URL ??
   process.env.NEXT_PUBLIC_SEARCH_API_BASE_URL ??
   'https://hopivdsbzzfklohyllut.supabase.co/functions/v1/api';
 
 export type RawSearchParams = Record<string, string | string[] | undefined>;
+
+export type BusType = 'inter-city' | 'city';
 
 export type SearchResult = {
   trip_id?: string;
@@ -12,6 +15,7 @@ export type SearchResult = {
   boards_at: string | null;
   board_stop: string;
   alight_stop: string;
+  distance_km?: string | null;
 };
 
 export type SearchResponse = {
@@ -97,6 +101,7 @@ export async function fetchSearchResults(
   fromSlug: string,
   toSlug: string,
   time: string,
+  type?: BusType,
 ): Promise<{ data: SearchResponse | null; error: string | null }> {
   const params = new URLSearchParams({
     from: slugToQuery(fromSlug),
@@ -107,9 +112,11 @@ export async function fetchSearchResults(
     params.set('time', time);
   }
 
-  const response = await fetch(`${API_BASE_URL}/search?${params.toString()}`, {
-    cache: 'no-store',
-  });
+  if (type) {
+    params.set('type', type);
+  }
+
+  const response = await fetch(`${API_BASE_URL}/search?${params.toString()}`);
 
   if (!response.ok) {
     return {
@@ -130,6 +137,7 @@ export async function fetchSearchResults(
       boards_at: rawResult.boards_at,
       board_stop: rawResult.board_stop,
       alight_stop: rawResult.alight_stop,
+      distance_km: (rawResult as SearchResult).distance_km ?? null,
     };
 
     const dedupeKey = [

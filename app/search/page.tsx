@@ -59,11 +59,21 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }
 
   const canSearch = Boolean(normalizedFrom && normalizedTo && !isSelfRoute);
-  const searchState = canSearch
-    ? await fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime)
-    : { data: null, error: null as string | null };
 
-  const hasResults = Boolean(searchState.data?.results?.length);
+  const [interCityState, cityState] = canSearch
+    ? await Promise.all([
+        fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime, 'inter-city'),
+        fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime, 'city'),
+      ])
+    : [
+        { data: null, error: null as string | null },
+        { data: null, error: null as string | null },
+      ];
+
+  const hasInterCity = Boolean(interCityState.data?.results?.length);
+  const hasCityBus = Boolean(cityState.data?.results?.length);
+  const hasAnyResults = hasInterCity || hasCityBus;
+  const error = interCityState.error || cityState.error;
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
@@ -73,7 +83,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             Search Bus Routes
           </h1>
           <p className="text-base leading-7 text-neutral-700">
-            Search TNSTC and SETC buses between Tamil Nadu routes, including
+            Search TNSTC, SETC, and MTC buses across Tamil Nadu, including
             intermediate stop matches.
           </p>
         </section>
@@ -90,30 +100,48 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </p>
         ) : null}
 
-        {searchState.error ? (
+        {error ? (
           <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {searchState.error}
+            {error}
           </p>
         ) : null}
 
-        {hasResults ? (
+        {hasInterCity ? (
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold tracking-tight">
-              Results for {toDisplayName(normalizedFrom)} to{' '}
+              Inter-city buses — {toDisplayName(normalizedFrom)} to{' '}
               {toDisplayName(normalizedTo)}
             </h2>
-              <SearchResults
-                fromSlug={normalizedFrom}
-                toSlug={normalizedTo}
-                results={searchState.data?.results ?? []}
-                showSeoLink={Boolean(searchState.data?.results?.length)}
-              />
-            </section>
+            <SearchResults
+              fromSlug={normalizedFrom}
+              toSlug={normalizedTo}
+              results={interCityState.data?.results ?? []}
+              showSeoLink
+              type="inter-city"
+            />
+          </section>
         ) : null}
 
-        {searchState.data && !hasResults && !isSelfRoute ? (
+        {hasCityBus ? (
+          <section className="space-y-4">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Chennai city buses — {toDisplayName(normalizedFrom)} to{' '}
+              {toDisplayName(normalizedTo)}
+            </h2>
+            <SearchResults
+              fromSlug={normalizedFrom}
+              toSlug={normalizedTo}
+              results={cityState.data?.results ?? []}
+              showSeoLink
+              type="city"
+            />
+          </section>
+        ) : null}
+
+        {canSearch && !hasAnyResults && !error && !isSelfRoute ? (
           <p className="rounded-md border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-800">
-            No buses found for {toDisplayName(normalizedFrom)} to {toDisplayName(normalizedTo)}. Try nearby towns or adjust time.
+            No buses found for {toDisplayName(normalizedFrom)} to{' '}
+            {toDisplayName(normalizedTo)}. Try nearby towns or adjust time.
           </p>
         ) : null}
       </div>

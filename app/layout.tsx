@@ -6,7 +6,7 @@ import { SITE_URL } from './lib/site-url';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'TN Bus Finder',
+  title: 'enbus.in',
   description: 'Search Tamil Nadu bus routes with intermediate stop support.',
 };
 

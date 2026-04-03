@@ -12,6 +12,10 @@ import {
 import { SearchResults } from '../../components/search-results';
 import { SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
+export function generateStaticParams() {
+  return SEO_ROUTE_SLUGS.map((route) => ({ route }));
+}
+
 type BusRoutePageProps = {
   params: Promise<{
     route: string;
@@ -50,7 +54,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${fromName} to ${toName} Bus Timings | TN Bus Finder`,
+    title: `${fromName} to ${toName} Bus Timings | enbus.in`,
     description: `Check buses from ${fromName} to ${toName} with timings, routes, and stops. Find TNSTC and SETC buses easily.`,
     alternates: {
       canonical: `/bus/${route}`,
@@ -73,7 +77,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
   const { fromSlug, toSlug } = parsed;
   const fromName = toDisplayName(fromSlug);
   const toName = toDisplayName(toSlug);
-  const searchState = await fetchSearchResults(fromSlug, toSlug, '');
+  const searchState = await fetchSearchResults(fromSlug, toSlug, '00:00', 'inter-city');
   const hasResults = Boolean(searchState.data?.results?.length);
 
   if (!searchState.error && !hasResults) {
@@ -119,7 +123,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           </h1>
 
           <p className="text-base leading-7 text-neutral-700">
-            Check {fromName} to {toName} bus timings with TN Bus Finder.
+            Check {fromName} to {toName} bus timings with enbus.in.
           </p>
           <p className="text-base leading-7 text-neutral-700">
             Find TNSTC and SETC buses between {fromName} and {toName}, including

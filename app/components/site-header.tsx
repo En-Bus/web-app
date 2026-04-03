@@ -5,7 +5,7 @@ export function SiteHeader() {
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 sm:px-6">
         <Link href="/" className="text-base font-semibold tracking-tight text-neutral-900">
-          TN Bus Finder
+          enbus.in
         </Link>
 
         <nav aria-label="Main navigation">
