@@ -97,6 +97,37 @@ export default function HomePage() {
             ))}
           </ul>
         </section>
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">
+            How it works
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+              <div className="text-2xl" aria-hidden="true">1</div>
+              <h3 className="mt-1 text-sm font-semibold">Search</h3>
+              <p className="mt-1 text-xs leading-5 text-neutral-600">
+                Enter your origin and destination. We search intermediate stops
+                too, not just terminals.
+              </p>
+            </div>
+            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+              <div className="text-2xl" aria-hidden="true">2</div>
+              <h3 className="mt-1 text-sm font-semibold">Compare</h3>
+              <p className="mt-1 text-xs leading-5 text-neutral-600">
+                See all matching buses with timings, route numbers, and the
+                exact stops where you board and alight.
+              </p>
+            </div>
+            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+              <div className="text-2xl" aria-hidden="true">3</div>
+              <h3 className="mt-1 text-sm font-semibold">Travel</h3>
+              <p className="mt-1 text-xs leading-5 text-neutral-600">
+                Pick the best bus for your schedule. No account needed,
+                no booking fees — just information.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );

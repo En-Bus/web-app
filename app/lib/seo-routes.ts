@@ -54,6 +54,35 @@ export const SEO_ROUTE_SLUGS = [
   'tiruppur-to-chennai',
 ] as const;
 
+// Unique origin cities extracted from inter-city + city bus slugs.
+// Used by /buses-from/[city] hub pages and sitemap.
+export function getHubCities(): string[] {
+  const cities = new Set<string>();
+  for (const slug of SEO_ROUTE_SLUGS) {
+    const from = slug.split('-to-')[0];
+    if (from) cities.add(from);
+  }
+  for (const slug of CITY_BUS_ROUTE_SLUGS) {
+    const from = slug.split('-to-')[0];
+    if (from) cities.add(from);
+  }
+  return [...cities].sort();
+}
+
+// Get all destination slugs reachable from a given origin city.
+export function getRoutesFromCity(citySlug: string): {
+  interCity: { toSlug: string; routeSlug: string }[];
+  cityBus: { toSlug: string; routeSlug: string }[];
+} {
+  const interCity = SEO_ROUTE_SLUGS
+    .filter((slug) => slug.startsWith(`${citySlug}-to-`))
+    .map((slug) => ({ toSlug: slug.split('-to-')[1], routeSlug: slug }));
+  const cityBus = CITY_BUS_ROUTE_SLUGS
+    .filter((slug) => slug.startsWith(`${citySlug}-to-`))
+    .map((slug) => ({ toSlug: slug.split('-to-')[1], routeSlug: slug }));
+  return { interCity, cityBus };
+}
+
 // Chennai city bus (MTC) route slugs — only pairs with 5+ unique route numbers
 // serving them, ensuring content-rich pages with multiple bus options.
 export const CITY_BUS_ROUTE_SLUGS = [

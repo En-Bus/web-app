@@ -44,13 +44,18 @@ export function SiteHeader() {
         <nav aria-label="Main navigation">
           <ul className="flex items-center gap-5 text-sm text-neutral-600">
             <li>
-              <Link href="/" className="hover:text-neutral-900 transition-colors">
-                Home
+              <Link href="/search" className="hover:text-neutral-900 transition-colors">
+                Search
               </Link>
             </li>
             <li>
-              <Link href="/search" className="hover:text-neutral-900 transition-colors">
-                Search
+              <Link href="/bus" className="hover:text-neutral-900 transition-colors">
+                Routes
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="hover:text-neutral-900 transition-colors">
+                About
               </Link>
             </li>
           </ul>

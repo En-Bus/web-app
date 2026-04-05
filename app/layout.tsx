@@ -16,6 +16,14 @@ export const metadata: Metadata = {
   },
   description:
     'Search Tamil Nadu bus routes with intermediate stop support. Find TNSTC, SETC, and MTC bus timings across 612 places and 37,770 trips.',
+  openGraph: {
+    type: 'website',
+    siteName: 'enbus.in',
+    locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

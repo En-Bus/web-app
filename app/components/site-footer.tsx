@@ -9,6 +9,37 @@ export function SiteFooter() {
             <h3 className="text-sm font-semibold text-neutral-900">Routes</h3>
             <ul className="mt-3 space-y-2 text-sm text-neutral-600">
               <li>
+                <Link href="/bus" className="hover:text-neutral-900">
+                  All inter-city routes
+                </Link>
+              </li>
+              <li>
+                <Link href="/city-bus" className="hover:text-neutral-900">
+                  Chennai MTC routes
+                </Link>
+              </li>
+              <li>
+                <Link href="/buses-from/chennai" className="hover:text-neutral-900">
+                  Buses from Chennai
+                </Link>
+              </li>
+              <li>
+                <Link href="/buses-from/bangalore" className="hover:text-neutral-900">
+                  Buses from Bangalore
+                </Link>
+              </li>
+              <li>
+                <Link href="/buses-from/koyambedu" className="hover:text-neutral-900">
+                  Buses from Koyambedu
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-neutral-900">Popular</h3>
+            <ul className="mt-3 space-y-2 text-sm text-neutral-600">
+              <li>
                 <Link href="/bus/chennai-to-madurai" className="hover:text-neutral-900">
                   Chennai to Madurai
                 </Link>
@@ -24,11 +55,6 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/bus/chennai-to-salem" className="hover:text-neutral-900">
-                  Chennai to Salem
-                </Link>
-              </li>
-              <li>
                 <Link href="/bus/bangalore-to-chennai" className="hover:text-neutral-900">
                   Bangalore to Chennai
                 </Link>
@@ -36,38 +62,12 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-neutral-900">City Bus</h3>
-            <ul className="mt-3 space-y-2 text-sm text-neutral-600">
-              <li>
-                <Link href="/city-bus/koyambedu-to-tambaram" className="hover:text-neutral-900">
-                  Koyambedu to Tambaram
-                </Link>
-              </li>
-              <li>
-                <Link href="/city-bus/koyambedu-to-kilambakkam" className="hover:text-neutral-900">
-                  Koyambedu to Kilambakkam
-                </Link>
-              </li>
-              <li>
-                <Link href="/city-bus/thiruvanmiyur-to-avadi" className="hover:text-neutral-900">
-                  Thiruvanmiyur to Avadi
-                </Link>
-              </li>
-              <li>
-                <Link href="/city-bus/koyambedu-to-poonamallee" className="hover:text-neutral-900">
-                  Koyambedu to Poonamallee
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           <div className="col-span-2 sm:col-span-1">
-            <h3 className="text-sm font-semibold text-neutral-900">About</h3>
+            <h3 className="text-sm font-semibold text-neutral-900">Info</h3>
             <ul className="mt-3 space-y-2 text-sm text-neutral-600">
               <li>
-                <Link href="/" className="hover:text-neutral-900">
-                  Home
+                <Link href="/about" className="hover:text-neutral-900">
+                  About enbus.in
                 </Link>
               </li>
               <li>
