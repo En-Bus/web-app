@@ -19,12 +19,30 @@ type SearchPageProps = {
   searchParams: Promise<RawSearchParams>;
 };
 
-export const metadata: Metadata = {
-  robots: {
-    index: false,
-    follow: true,
-  },
-};
+export async function generateMetadata({
+  searchParams,
+}: SearchPageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const rawFrom = getParamValue(params.from);
+  const rawTo = getParamValue(params.to);
+
+  if (rawFrom && rawTo) {
+    const from = toDisplayName(normalizeSlug(rawFrom));
+    const to = toDisplayName(normalizeSlug(rawTo));
+    return {
+      title: `${from} to ${to} Bus Timings | TNSTC & SETC`,
+      description: `Check ${from} to ${to} government bus timings, routes and stops. Find TNSTC, SETC & MTC buses with departure times.`,
+      robots: { index: false, follow: true },
+    };
+  }
+
+  return {
+    title: 'Search Bus Routes | TNSTC, SETC & MTC',
+    description:
+      'Search Tamil Nadu government bus routes with timings, stops, and intermediate stop support.',
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;

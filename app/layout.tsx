@@ -8,8 +8,19 @@ import { SITE_URL } from './lib/site-url';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'enbus.in',
-  description: 'Search Tamil Nadu bus routes with intermediate stop support.',
+  title: {
+    default: 'Tamil Nadu Bus Routes & Timings | TNSTC, SETC, MTC — enbus.in',
+    template: '%s — enbus.in',
+  },
+  description:
+    'Find government bus routes, timings & stops across Tamil Nadu. Search TNSTC, SETC & MTC buses with intermediate stop support.',
+  openGraph: {
+    title: 'Tamil Nadu Bus Routes & Timings — enbus.in',
+    description:
+      'Search 1,100+ TNSTC, SETC & MTC bus routes across Tamil Nadu with departure times and intermediate stops.',
+    siteName: 'enbus.in',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

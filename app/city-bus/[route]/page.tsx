@@ -46,7 +46,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${fromName} to ${toName} MTC Bus Routes & Timings | enbus.in`,
+    title: `${fromName} to ${toName} MTC Bus Routes & Timings`,
     description: `Find MTC city bus routes from ${fromName} to ${toName} in Chennai. Check bus numbers, first and last bus timings.`,
     alternates: {
       canonical: `/city-bus/${route}`,

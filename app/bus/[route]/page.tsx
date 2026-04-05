@@ -54,8 +54,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${fromName} to ${toName} Bus Timings | enbus.in`,
-    description: `Check buses from ${fromName} to ${toName} with timings, routes, and stops. Find TNSTC and SETC buses easily.`,
+    title: `${fromName} to ${toName} Bus Timings | TNSTC & SETC`,
+    description: `Check ${fromName} to ${toName} government bus timings, routes and stops. Find TNSTC, SETC & MTC buses with departure times.`,
     alternates: {
       canonical: `/bus/${route}`,
     },
