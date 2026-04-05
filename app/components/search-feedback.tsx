@@ -65,14 +65,16 @@ export function SearchFeedback({ from, to, hasResults }: SearchFeedbackProps) {
 
   function submitComment(formData: FormData) {
     const comment = (formData.get('comment') as string)?.trim();
-    if (!comment) return;
+    const phone = (formData.get('phone') as string)?.trim();
+    if (!comment && !phone) return;
 
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', 'search_feedback_comment', {
         search_from: from,
         search_to: to,
         helpful: state,
-        comment: comment.slice(0, 200),
+        comment: (comment || '').slice(0, 200),
+        phone: (phone || '').slice(0, 15),
       });
     }
 
@@ -110,6 +112,14 @@ export function SearchFeedback({ from, to, hasResults }: SearchFeedbackProps) {
           type="text"
           maxLength={200}
           placeholder="e.g. Bus from Gandhipuram to Ukkadam"
+          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-500"
+        />
+        <input
+          id="feedback-phone"
+          name="phone"
+          type="tel"
+          maxLength={15}
+          placeholder="Phone number (optional)"
           className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-500"
         />
         <button
