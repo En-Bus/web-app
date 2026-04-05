@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import Script from 'next/script';
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
@@ -11,18 +12,33 @@ export function GAAnalytics() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!GA_MEASUREMENT_ID) return;
+    if (!GA_MEASUREMENT_ID || typeof window === 'undefined') return;
+    const gtag = (window as any).gtag;
+    if (!gtag) return;
+
     const url = searchParams?.toString()
       ? `${pathname}?${searchParams.toString()}`
       : pathname || '/';
 
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('config', GA_MEASUREMENT_ID, {
-        page_path: url,
-      });
-    }
+    gtag('config', GA_MEASUREMENT_ID, { page_path: url });
   }, [pathname, searchParams]);
 
-  return null;
-}
+  if (!GA_MEASUREMENT_ID) return null;
 
+  return (
+    <>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="ga-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_MEASUREMENT_ID}');
+        `}
+      </Script>
+    </>
+  );
+}

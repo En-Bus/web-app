@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { SearchForm } from '../components/search-form';
 import { SearchResults } from '../components/search-results';
+import { SearchEventTracker, SearchFeedback } from '../components/search-feedback';
 import {
   fetchSearchResults,
   getParamValue,
@@ -143,6 +145,27 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             No buses found for {toDisplayName(normalizedFrom)} to{' '}
             {toDisplayName(normalizedTo)}. Try nearby towns or adjust time.
           </p>
+        ) : null}
+
+        {canSearch && !error && !isSelfRoute ? (
+          <Suspense>
+            <SearchFeedback
+              from={normalizedFrom}
+              to={normalizedTo}
+              hasResults={hasAnyResults}
+            />
+          </Suspense>
+        ) : null}
+
+        {canSearch ? (
+          <Suspense>
+            <SearchEventTracker
+              from={normalizedFrom}
+              to={normalizedTo}
+              interCityCount={interCityState.data?.results?.length ?? 0}
+              cityCount={cityState.data?.results?.length ?? 0}
+            />
+          </Suspense>
         ) : null}
       </div>
     </main>
