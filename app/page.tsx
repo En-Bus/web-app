@@ -53,11 +53,11 @@ export default function HomePage() {
         <SearchForm />
 
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-500">
-          <span>612 places</span>
+          <span>2,200+ stops</span>
           <span aria-hidden="true" className="text-neutral-300">&middot;</span>
-          <span>37,770 trips</span>
+          <span>93,000+ trips</span>
           <span aria-hidden="true" className="text-neutral-300">&middot;</span>
-          <span>15 agencies</span>
+          <span>TNSTC, SETC &amp; MTC</span>
           <span aria-hidden="true" className="text-neutral-300">&middot;</span>
           <span>Free, no ads</span>
         </div>

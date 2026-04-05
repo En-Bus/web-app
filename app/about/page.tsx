@@ -74,9 +74,9 @@ export default function AboutPage() {
                 </li>
               </ul>
               <p>
-                Our database currently covers <strong>612 places</strong>,{' '}
-                <strong>37,770 trips</strong>, and <strong>15 agencies</strong>{' '}
-                across Tamil Nadu.
+                Our database currently covers <strong>2,200+ stops</strong>,{' '}
+                <strong>93,000+ trips</strong>, and <strong>3 agencies</strong>{' '}
+                (TNSTC, SETC, MTC) across Tamil Nadu.
               </p>
               <p>
                 Timetables are indicative and sourced from published schedules.
