@@ -3,23 +3,26 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
 import { SiteHeader } from './components/site-header';
+import { SiteFooter } from './components/site-footer';
 import { GAAnalytics } from './components/ga-analytics';
+import { WebSiteJsonLd, OrganizationJsonLd } from './components/json-ld';
 import { SITE_URL } from './lib/site-url';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Tamil Nadu Bus Routes & Timings | TNSTC, SETC, MTC — enbus.in',
-    template: '%s — enbus.in',
+    default: 'Tamil Nadu Bus Routes & Timings — enbus.in',
+    template: '%s | enbus.in',
   },
   description:
-    'Find government bus routes, timings & stops across Tamil Nadu. Search TNSTC, SETC & MTC buses with intermediate stop support.',
+    'Search Tamil Nadu bus routes with intermediate stop support. Find TNSTC, SETC, and MTC bus timings across 2,200+ stops and 93,000+ trips.',
   openGraph: {
-    title: 'Tamil Nadu Bus Routes & Timings — enbus.in',
-    description:
-      'Search 1,100+ TNSTC, SETC & MTC bus routes across Tamil Nadu with departure times and intermediate stops.',
-    siteName: 'enbus.in',
     type: 'website',
+    siteName: 'enbus.in',
+    locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary',
   },
 };
 
@@ -30,8 +33,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Suspense>
           <GAAnalytics />
         </Suspense>
+        <WebSiteJsonLd />
+        <OrganizationJsonLd />
         <SiteHeader />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

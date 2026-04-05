@@ -23,7 +23,7 @@ export function SearchForm({
           id="from"
           name="from"
           defaultValue={defaultFrom}
-          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-neutral-500"
+          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
         />
       </div>
 
@@ -35,7 +35,7 @@ export function SearchForm({
           id="to"
           name="to"
           defaultValue={defaultTo}
-          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-neutral-500"
+          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
         />
       </div>
 
@@ -47,15 +47,15 @@ export function SearchForm({
           id="time"
           name="time"
           defaultValue={defaultTime}
-          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-neutral-500"
+          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
         />
       </div>
 
       <button
         type="submit"
-        className="inline-flex rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white"
+        className="inline-flex rounded-md bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
       >
-        Search
+        Search Buses
       </button>
     </form>
   );

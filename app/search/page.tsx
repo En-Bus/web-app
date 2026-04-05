@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { SearchForm } from '../components/search-form';
+import { Breadcrumb } from '../components/breadcrumb';
 import { SearchResults } from '../components/search-results';
 import { SearchEventTracker, SearchFeedback } from '../components/search-feedback';
 import {
@@ -95,7 +96,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const hasAnyResults = hasInterCity || hasCityBus;
   const error = interCityState.error || cityState.error;
 
+  const breadcrumbItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Search Results' },
+  ];
+
   return (
+    <>
+    <Breadcrumb items={breadcrumbItems} />
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="space-y-8">
         <section className="space-y-3">
@@ -187,5 +195,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         ) : null}
       </div>
     </main>
+    </>
   );
 }

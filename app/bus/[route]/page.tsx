@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { SearchForm } from '../../components/search-form';
+import { Breadcrumb } from '../../components/breadcrumb';
+import { FAQJsonLd } from '../../components/json-ld';
 import {
   buildBusRouteSlug,
   fetchSearchResults,
@@ -54,8 +56,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${fromName} to ${toName} Bus Timings | TNSTC & SETC`,
-    description: `Check ${fromName} to ${toName} government bus timings, routes and stops. Find TNSTC, SETC & MTC buses with departure times.`,
+    title: `${fromName} to ${toName} Bus Timings (2026)`,
+    description: `Compare TNSTC & SETC buses from ${fromName} to ${toName} — timings, stops, and routes including intermediate stops. Updated for 2026.`,
     alternates: {
       canonical: `/bus/${route}`,
     },
@@ -79,6 +81,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
   const toName = toDisplayName(toSlug);
   const searchState = await fetchSearchResults(fromSlug, toSlug, '00:00', 'inter-city');
   const hasResults = Boolean(searchState.data?.results?.length);
+  const resultCount = searchState.data?.results?.length ?? 0;
 
   if (!searchState.error && !hasResults) {
     notFound();
@@ -101,37 +104,39 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
 
   const popularRoutes = [...seoSuggestions, ...curatedFallback].slice(0, 5);
 
+  const breadcrumbItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Bus Routes', href: '/bus' },
+    { name: `${fromName} to ${toName}` },
+  ];
+
   if (searchState.error) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {fromName} to {toName} Bus Timings
-        </h1>
-        <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {searchState.error}
-        </p>
-      </main>
+      <>
+        <Breadcrumb items={breadcrumbItems} />
+        <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {fromName} to {toName} Bus Timings
+          </h1>
+          <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {searchState.error}
+          </p>
+        </main>
+      </>
     );
   }
 
   return (
+    <>
+    <Breadcrumb items={breadcrumbItems} />
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="space-y-8">
-        <section className="space-y-3">
-          <h1 className="text-3xl font-semibold tracking-tight">
+        <section className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">
             {fromName} to {toName} Bus Timings
           </h1>
-
-          <p className="text-base leading-7 text-neutral-700">
-            Check {fromName} to {toName} bus timings with enbus.in.
-          </p>
-          <p className="text-base leading-7 text-neutral-700">
-            Find TNSTC and SETC buses between {fromName} and {toName}, including
-            routes that match through intermediate stops.
-          </p>
-          <p className="text-base leading-7 text-neutral-700">
-            Use this page to quickly review available buses, timings, and stop
-            coverage for {fromName} to {toName}.
+          <p className="text-sm text-neutral-500">
+            {resultCount} bus{resultCount !== 1 ? 'es' : ''} found &middot; TNSTC &amp; SETC services &middot; Updated 2026
           </p>
         </section>
 
@@ -144,6 +149,36 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           showSeoLink={false}
         />
 
+        <section className="space-y-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
+          <h2 className="text-lg font-semibold tracking-tight">
+            About {fromName} to {toName} buses
+          </h2>
+          <div className="space-y-2 text-sm leading-6 text-neutral-700">
+            <p>
+              {resultCount} TNSTC and SETC buses operate between {fromName} and {toName}.
+              enbus.in matches intermediate stops too, so you can find buses
+              even if {fromName} or {toName} is a mid-route stop.
+            </p>
+            <p>
+              Bus types include Express, Super Deluxe, Ultra Deluxe, A/C Sleeper,
+              and Semi-Sleeper services depending on the route.
+            </p>
+          </div>
+        </section>
+
+        <FAQJsonLd
+          questions={[
+            {
+              question: `How many buses run from ${fromName} to ${toName}?`,
+              answer: `There are ${resultCount} buses operating from ${fromName} to ${toName}, including TNSTC and SETC services.`,
+            },
+            {
+              question: `Can I find buses that stop at ${fromName} or ${toName} mid-route?`,
+              answer: `Yes. enbus.in searches intermediate stops, so you can find buses even if ${fromName} or ${toName} is not the origin or terminus.`,
+            },
+          ]}
+        />
+
         <section className="space-y-3">
           <h2 className="text-xl font-semibold tracking-tight">
             Popular routes from {fromName}
@@ -153,7 +188,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
             <li key={route.href}>
               <Link
                 href={route.href}
-                className="text-sm text-neutral-900 underline underline-offset-2"
+                className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
               >
                 {route.label}
               </Link>
@@ -163,5 +198,6 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
         </section>
       </div>
     </main>
+    </>
   );
 }
