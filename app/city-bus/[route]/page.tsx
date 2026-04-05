@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { SearchForm } from '../../components/search-form';
+import { Breadcrumb } from '../../components/breadcrumb';
+import { FAQJsonLd } from '../../components/json-ld';
 import {
   buildBusRouteSlug,
   fetchSearchResults,
@@ -46,8 +48,8 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${fromName} to ${toName} MTC Bus Routes & Timings | enbus.in`,
-    description: `Find MTC city bus routes from ${fromName} to ${toName} in Chennai. Check bus numbers, first and last bus timings.`,
+    title: `${fromName} to ${toName} MTC Bus Routes & Timings (2026)`,
+    description: `Find MTC city bus routes from ${fromName} to ${toName} in Chennai — bus numbers, timings, and stops. Updated for 2026.`,
     alternates: {
       canonical: `/city-bus/${route}`,
     },
@@ -93,36 +95,41 @@ export default async function CityBusRoutePage({
     }))
     .slice(0, 5);
 
+  const breadcrumbItems = [
+    { name: 'Home', href: '/' },
+    { name: 'City Bus Routes', href: '/city-bus' },
+    { name: `${fromName} to ${toName}` },
+  ];
+
   if (searchState.error) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {fromName} to {toName} MTC Bus Routes
-        </h1>
-        <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {searchState.error}
-        </p>
-      </main>
+      <>
+        <Breadcrumb items={breadcrumbItems} />
+        <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {fromName} to {toName} MTC Bus Routes
+          </h1>
+          <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {searchState.error}
+          </p>
+        </main>
+      </>
     );
   }
 
   const resultCount = searchState.data?.results?.length ?? 0;
 
   return (
+    <>
+    <Breadcrumb items={breadcrumbItems} />
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="space-y-8">
-        <section className="space-y-3">
-          <h1 className="text-3xl font-semibold tracking-tight">
+        <section className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">
             {fromName} to {toName} MTC Bus Routes
           </h1>
-
-          <p className="text-base leading-7 text-neutral-700">
-            {resultCount} MTC city bus{resultCount !== 1 ? ' routes' : ' route'}{' '}
-            from {fromName} to {toName} in Chennai.
-          </p>
-          <p className="text-base leading-7 text-neutral-700">
-            Find bus numbers, departure times, and stop details for Chennai
-            metropolitan buses between {fromName} and {toName}.
+          <p className="text-sm text-neutral-500">
+            {resultCount} MTC city bus{resultCount !== 1 ? ' routes' : ' route'} found &middot; Chennai metropolitan &middot; Updated 2026
           </p>
         </section>
 
@@ -136,6 +143,32 @@ export default async function CityBusRoutePage({
           type="city"
         />
 
+        <section className="space-y-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
+          <h2 className="text-lg font-semibold tracking-tight">
+            About {fromName} to {toName} city buses
+          </h2>
+          <div className="space-y-2 text-sm leading-6 text-neutral-700">
+            <p>
+              {resultCount} MTC buses connect {fromName} and {toName} in
+              the Chennai metropolitan area. enbus.in matches intermediate stops,
+              so you can find buses even when your stop is mid-route.
+            </p>
+          </div>
+        </section>
+
+        <FAQJsonLd
+          questions={[
+            {
+              question: `How many MTC buses run from ${fromName} to ${toName}?`,
+              answer: `There are ${resultCount} MTC city bus routes from ${fromName} to ${toName} in Chennai.`,
+            },
+            {
+              question: `Can I find MTC buses stopping at ${fromName} mid-route?`,
+              answer: `Yes. enbus.in searches intermediate stops, so you can find MTC buses even if ${fromName} is not the first or last stop.`,
+            },
+          ]}
+        />
+
         {seoSuggestions.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xl font-semibold tracking-tight">
@@ -146,7 +179,7 @@ export default async function CityBusRoutePage({
                 <li key={route.href}>
                   <Link
                     href={route.href}
-                    className="text-sm text-neutral-900 underline underline-offset-2"
+                    className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
                   >
                     {route.label}
                   </Link>
@@ -157,5 +190,6 @@ export default async function CityBusRoutePage({
         )}
       </div>
     </main>
+    </>
   );
 }

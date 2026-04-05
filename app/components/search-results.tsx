@@ -15,6 +15,24 @@ type SearchResultsProps = {
   type?: BusType;
 };
 
+function AgencyBadge({ serviceType }: { serviceType?: string | null }) {
+  if (!serviceType) return null;
+
+  const colorMap: Record<string, string> = {
+    SETC: 'bg-orange-50 text-orange-700 border-orange-200',
+    TNSTC: 'bg-green-50 text-green-700 border-green-200',
+    MTC: 'bg-brand-50 text-brand-700 border-brand-100',
+  };
+
+  const colors = colorMap[serviceType] ?? 'bg-neutral-50 text-neutral-600 border-neutral-200';
+
+  return (
+    <span className={`inline-flex rounded px-1.5 py-0.5 text-xs font-medium border ${colors}`}>
+      {serviceType}
+    </span>
+  );
+}
+
 export function SearchResults({
   fromSlug,
   toSlug,
@@ -34,28 +52,28 @@ export function SearchResults({
       {canShowSeoLink ? (
         <p className="text-sm text-neutral-600">
           View route page:{' '}
-          <Link href={seoHref} className="text-neutral-900 underline underline-offset-2">
+          <Link href={seoHref} className="text-brand-600 underline underline-offset-2 hover:text-brand-700">
             {seoHref}
           </Link>
         </p>
       ) : null}
 
       {results.length ? (
-        <ul className="space-y-4">
+        <ul className="space-y-3">
           {results.map((result, index) => (
             <li
               key={
                 result.trip_id ??
                 `${result.route_no}-${result.boards_at ?? result.departs_at}-${index}`
               }
-              className="rounded-lg border border-neutral-200 bg-white p-4"
+              className="rounded-lg border border-neutral-200 bg-white p-4 hover:border-neutral-300 transition-colors"
             >
-              <div className="flex items-baseline justify-between">
-                <div className="text-lg font-semibold text-neutral-900">
-                  {result.route_no}
-                  {result.service_type && result.service_type !== 'MTC'
-                    ? ` (${result.service_type})`
-                    : ''}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-neutral-900">
+                    {result.route_no}
+                  </span>
+                  <AgencyBadge serviceType={result.service_type} />
                 </div>
                 {result.distance_km ? (
                   <span className="text-sm text-neutral-500">
@@ -66,8 +84,10 @@ export function SearchResults({
               <div className="mt-2 text-base font-medium text-neutral-800">
                 {getBestDisplayTime(result)}
               </div>
-              <div className="mt-2 text-sm leading-6 text-neutral-700">
-                {formatStopName(result.board_stop)} {' -> '}{formatStopName(result.alight_stop)}
+              <div className="mt-1.5 text-sm leading-6 text-neutral-600">
+                {formatStopName(result.board_stop)}
+                <span className="mx-1.5 text-neutral-400" aria-label="to">&rarr;</span>
+                {formatStopName(result.alight_stop)}
               </div>
             </li>
           ))}
