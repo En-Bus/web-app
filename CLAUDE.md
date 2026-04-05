@@ -31,8 +31,12 @@ enbus.in (TN Bus Finder) — a Next.js 16 app for searching Tamil Nadu (TNSTC/SE
 - `/` — Homepage with search form and popular routes from `SEO_ROUTE_SLUGS`
 - `/search` — Server-side search with query params (`from`, `to`, `time`); noindex'd by robots
 - `/bus/[route]` — SEO route pages (e.g., `/bus/chennai-to-madurai`); returns 404 if slug is invalid, self-referencing, or has zero results
+- `/city-bus` — City bus search page (MTC/urban routes)
+- `/city-bus/[route]` — City bus SEO route pages
+- `/buses-from/[city]` — Hub pages showing all routes from a city
+- `/about` — About page
 
-**Components are all server components** except `GAAnalytics` (client component for Google Analytics pageview tracking). `SearchForm` uses native HTML form submission (GET to `/search`), not client-side state.
+**Components are all server components** except `GAAnalytics` and `SearchFeedback` (client components). `SearchForm` uses native HTML form submission (GET to `/search`), not client-side state. `SearchFeedback` collects user feedback with optional phone number and sends events to GA.
 
 ## Environment Variables
 
@@ -47,6 +51,8 @@ Tests live in `tests/` directory (not colocated). Vitest with jsdom environment.
 
 ## SEO Considerations
 
-The `/search` page is noindex'd. SEO value comes from `/bus/[route]` pages. When adding new routes, add them to `SEO_ROUTE_SLUGS` in `app/lib/seo-routes.ts` — this drives sitemap.xml generation and related route suggestions.
+The `/search` page is noindex'd. SEO value comes from `/bus/[route]` pages (~126 pages). Zero-result routes have been pruned. When adding new routes, add them to `SEO_ROUTE_SLUGS` in `app/lib/seo-routes.ts` — this drives sitemap.xml generation and related route suggestions.
+
+The search API supports a `type` parameter (`inter-city` or `city`) to filter between TNSTC/SETC and MTC/urban routes.
 
 The README.md in this repo is unrelated (it's a Supabase CLI readme, not project documentation).

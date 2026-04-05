@@ -1,8 +1,11 @@
 import Link from 'next/link';
 
 import { SearchForm } from './components/search-form';
+import { PreLaunch } from './components/pre-launch';
 import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS } from './lib/seo-routes';
 import { parseBusRouteSlug, toDisplayName } from './lib/bus-search';
+
+const IS_LAUNCHED = process.env.NEXT_PUBLIC_LAUNCHED === 'true';
 
 function buildRouteLinks(
   slugs: readonly string[],
@@ -24,6 +27,9 @@ function buildRouteLinks(
 }
 
 export default function HomePage() {
+  if (!IS_LAUNCHED) {
+    return <PreLaunch />;
+  }
   const interCityRoutes = buildRouteLinks(
     SEO_ROUTE_SLUGS,
     '/bus',

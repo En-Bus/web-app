@@ -140,12 +140,11 @@ export async function fetchSearchResults(
       distance_km: (rawResult as SearchResult).distance_km ?? null,
     };
 
-    const dedupeKey = [
-      result.route_no,
-      result.boards_at ?? result.departs_at ?? '',
-      result.board_stop.trim().toLowerCase(),
-      result.alight_stop.trim().toLowerCase(),
-    ].join('|');
+    const dedupeKey = result.trip_id
+      ?? [
+        result.route_no,
+        result.boards_at ?? result.departs_at ?? '',
+      ].join('|');
 
     if (!deduped.has(dedupeKey)) {
       deduped.set(dedupeKey, result);
