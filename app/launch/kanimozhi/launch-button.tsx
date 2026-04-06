@@ -34,7 +34,7 @@ export function LaunchButton() {
           You just launched it, Kanimozhi.
         </p>
         <p className="text-sm text-neutral-400">
-          The site is redeploying now. Give it about a minute, then visit{' '}
+          Go see it —{' '}
           <a
             href="https://enbus.in"
             className="font-medium text-brand-600 underline underline-offset-2"

@@ -5,7 +5,28 @@ import { PreLaunch } from './components/pre-launch';
 import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS } from './lib/seo-routes';
 import { parseBusRouteSlug, toDisplayName } from './lib/bus-search';
 
-const IS_LAUNCHED = process.env.NEXT_PUBLIC_LAUNCHED === 'true';
+const SUPABASE_URL = 'https://hopivdsbzzfklohyllut.supabase.co';
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcGl2ZHNienpma2xvaHlsbHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzYwMTEsImV4cCI6MjA5MDExMjAxMX0.UWJcu75b-JAEXdMirzeng14n9lPNY8s0zMkcGNzzTBM';
+
+async function isLaunched(): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/site_config?key=eq.launched&select=value`,
+      {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        cache: 'no-store',
+      },
+    );
+    const data = await res.json();
+    return data?.[0]?.value === 'true';
+  } catch {
+    return true;
+  }
+}
 
 function buildRouteLinks(
   slugs: readonly string[],
@@ -26,8 +47,9 @@ function buildRouteLinks(
     .filter(Boolean) as { href: string; label: string }[];
 }
 
-export default function HomePage() {
-  if (!IS_LAUNCHED) {
+export default async function HomePage() {
+  const launched = await isLaunched();
+  if (!launched) {
     return <PreLaunch />;
   }
   const interCityRoutes = buildRouteLinks(
