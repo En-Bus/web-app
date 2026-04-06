@@ -1,8 +1,8 @@
 'use server';
 
 export async function launchSite(): Promise<{ success: boolean; message: string }> {
-  const token = process.env.VERCEL_TOKEN;
-  const teamId = process.env.VERCEL_TEAM_ID;
+  const token = process.env.LAUNCH_VERCEL_TOKEN;
+  const teamId = process.env.LAUNCH_TEAM_ID;
   const projectId = 'prj_AiWfwvWob5lWrfHZfe6RNH08WbaU';
 
   if (!token || !teamId) {
