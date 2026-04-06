@@ -86,7 +86,7 @@ export function SearchResults({
               </div>
               <div className="mt-1.5 text-sm leading-6 text-neutral-600">
                 {formatStopName(result.board_stop)}
-                <span className="mx-1.5 text-neutral-400" aria-label="to">&rarr;</span>
+                <span className="mx-1.5 text-neutral-400" aria-hidden="true">&rarr;</span>
                 {formatStopName(result.alight_stop)}
               </div>
             </li>

@@ -125,10 +125,12 @@ export function getRoutesFromCity(citySlug: string): {
 } {
   const interCity = SEO_ROUTE_SLUGS
     .filter((slug) => slug.startsWith(`${citySlug}-to-`))
-    .map((slug) => ({ toSlug: slug.split('-to-')[1], routeSlug: slug }));
+    .map((slug) => ({ toSlug: slug.split('-to-')[1] ?? '', routeSlug: slug }))
+    .filter((r) => r.toSlug.length > 0);
   const cityBus = CITY_BUS_ROUTE_SLUGS
     .filter((slug) => slug.startsWith(`${citySlug}-to-`))
-    .map((slug) => ({ toSlug: slug.split('-to-')[1], routeSlug: slug }));
+    .map((slug) => ({ toSlug: slug.split('-to-')[1] ?? '', routeSlug: slug }))
+    .filter((r) => r.toSlug.length > 0);
   return { interCity, cityBus };
 }
 

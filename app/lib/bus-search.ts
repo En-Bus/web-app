@@ -46,8 +46,14 @@ export function normalizeSlug(value: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+const TIME_FORMAT = /^([01]\d|2[0-3]):[0-5]\d$/;
+
 export function normalizeTime(value: string): string {
-  return value.trim();
+  const trimmed = value.trim();
+  if (trimmed && !TIME_FORMAT.test(trimmed)) {
+    return '';
+  }
+  return trimmed;
 }
 
 export function slugToQuery(value: string): string {
@@ -125,7 +131,16 @@ export async function fetchSearchResults(
     };
   }
 
-  const data = (await response.json()) as SearchResponse;
+  let data: SearchResponse;
+  try {
+    data = (await response.json()) as SearchResponse;
+  } catch {
+    return {
+      data: null,
+      error: 'Invalid response from search API.',
+    };
+  }
+
   const deduped = new Map<string, SearchResult>();
 
   for (const rawResult of data.results ?? []) {
@@ -143,6 +158,8 @@ export async function fetchSearchResults(
     const dedupeKey = result.trip_id
       ?? [
         result.route_no,
+        result.board_stop,
+        result.alight_stop,
         result.boards_at ?? result.departs_at ?? '',
       ].join('|');
 

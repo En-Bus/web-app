@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import SearchPage, { metadata } from '../app/search/page';
+import SearchPage, { generateMetadata } from '../app/search/page';
 
 // Helper to render the async server component by invoking it directly.
 async function renderSearch(params: Record<string, string>) {
@@ -16,7 +16,17 @@ describe('SearchPage self-route guard', () => {
 });
 
 describe('Search metadata', () => {
-  it('is noindex for search', () => {
-    expect(metadata.robots?.index).toBe(false);
+  it('is noindex for search', async () => {
+    const metadata = await generateMetadata({
+      searchParams: Promise.resolve({ from: 'chennai', to: 'madurai' }),
+    });
+    expect((metadata.robots as { index: boolean })?.index).toBe(false);
+  });
+
+  it('is noindex even without search params', async () => {
+    const metadata = await generateMetadata({
+      searchParams: Promise.resolve({}),
+    });
+    expect((metadata.robots as { index: boolean })?.index).toBe(false);
   });
 });

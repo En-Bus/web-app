@@ -1,3 +1,5 @@
+import { StopAutocomplete } from './stop-autocomplete';
+
 type SearchFormProps = {
   defaultFrom?: string;
   defaultTo?: string;
@@ -19,11 +21,11 @@ export function SearchForm({
         <label htmlFor="from" className="block text-sm font-medium">
           From
         </label>
-        <input
+        <StopAutocomplete
           id="from"
           name="from"
+          required
           defaultValue={defaultFrom}
-          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
         />
       </div>
 
@@ -31,11 +33,11 @@ export function SearchForm({
         <label htmlFor="to" className="block text-sm font-medium">
           To
         </label>
-        <input
+        <StopAutocomplete
           id="to"
           name="to"
+          required
           defaultValue={defaultTo}
-          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
         />
       </div>
 
@@ -46,6 +48,7 @@ export function SearchForm({
         <input
           id="time"
           name="time"
+          type="time"
           defaultValue={defaultTime}
           className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-base shadow-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
         />
