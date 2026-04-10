@@ -54,6 +54,11 @@ export function SiteHeader() {
               </Link>
             </li>
             <li>
+              <Link href="/contribute" className="hover:text-neutral-900 transition-colors">
+                Contribute
+              </Link>
+            </li>
+            <li>
               <Link href="/about" className="hover:text-neutral-900 transition-colors">
                 About
               </Link>

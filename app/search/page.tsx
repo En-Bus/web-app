@@ -3,13 +3,13 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { SearchForm } from '../components/search-form';
-import { Breadcrumb } from '../components/breadcrumb';
 import { SearchResults } from '../components/search-results';
 import { SearchEventTracker, SearchFeedback } from '../components/search-feedback';
 import {
   fetchSearchResults,
   getParamValue,
   normalizeSlug,
+  normalizeQuerySlug,
   normalizeTime,
   slugToQuery,
   toDisplayName,
@@ -28,8 +28,8 @@ export async function generateMetadata({
   const rawTo = getParamValue(params.to);
 
   if (rawFrom && rawTo) {
-    const from = toDisplayName(normalizeSlug(rawFrom));
-    const to = toDisplayName(normalizeSlug(rawTo));
+    const from = toDisplayName(normalizeQuerySlug(rawFrom));
+    const to = toDisplayName(normalizeQuerySlug(rawTo));
     return {
       title: `${from} to ${to} Bus Timings | TNSTC & SETC`,
       description: `Check ${from} to ${to} government bus timings, routes and stops. Find TNSTC, SETC & MTC buses with departure times.`,
@@ -51,15 +51,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const rawTo = getParamValue(params.to);
   const rawTime = getParamValue(params.time);
 
-  const normalizedFrom = rawFrom ? normalizeSlug(rawFrom) : '';
-  const normalizedTo = rawTo ? normalizeSlug(rawTo) : '';
+  const normalizedFrom = rawFrom ? normalizeQuerySlug(rawFrom) : '';
+  const normalizedTo = rawTo ? normalizeQuerySlug(rawTo) : '';
   const normalizedTime = rawTime ? normalizeTime(rawTime) : '';
   const isSelfRoute = Boolean(normalizedFrom && normalizedFrom === normalizedTo);
 
   const needsRedirect =
-    (rawFrom && rawFrom !== normalizedFrom) ||
-    (rawTo && rawTo !== normalizedTo) ||
-    (rawTime && rawTime !== normalizedTime);
+    !isSelfRoute &&
+    ((rawFrom && rawFrom !== normalizedFrom) ||
+      (rawTo && rawTo !== normalizedTo) ||
+      (rawTime && rawTime !== normalizedTime));
 
   if (needsRedirect) {
     const nextParams = new URLSearchParams();
@@ -80,30 +81,27 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }
 
   const canSearch = Boolean(normalizedFrom && normalizedTo && !isSelfRoute);
+  const rawType = getParamValue(params.type);
+  const typeFilter = rawType === 'inter-city' || rawType === 'city' ? rawType : null;
 
+  const emptyState = { data: null, error: null as string | null };
   const [interCityState, cityState] = canSearch
     ? await Promise.all([
-        fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime, 'inter-city'),
-        fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime, 'city'),
+        typeFilter !== 'city'
+          ? fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime, 'inter-city')
+          : Promise.resolve(emptyState),
+        typeFilter !== 'inter-city'
+          ? fetchSearchResults(normalizedFrom, normalizedTo, normalizedTime, 'city')
+          : Promise.resolve(emptyState),
       ])
-    : [
-        { data: null, error: null as string | null },
-        { data: null, error: null as string | null },
-      ];
+    : [emptyState, emptyState];
 
   const hasInterCity = Boolean(interCityState.data?.results?.length);
   const hasCityBus = Boolean(cityState.data?.results?.length);
   const hasAnyResults = hasInterCity || hasCityBus;
   const error = interCityState.error || cityState.error;
 
-  const breadcrumbItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Search Results' },
-  ];
-
   return (
-    <>
-    <Breadcrumb items={breadcrumbItems} />
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="space-y-8">
         <section className="space-y-3">
@@ -167,10 +165,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         ) : null}
 
         {canSearch && !hasAnyResults && !error && !isSelfRoute ? (
-          <p className="rounded-md border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-800">
-            No buses found for {toDisplayName(normalizedFrom)} to{' '}
-            {toDisplayName(normalizedTo)}. Try nearby towns or adjust time.
-          </p>
+          <div className="rounded-md border border-neutral-200 bg-neutral-50 px-4 py-4 text-sm">
+            <p className="text-neutral-800">
+              No buses found for {toDisplayName(normalizedFrom)} to{' '}
+              {toDisplayName(normalizedTo)}. Try nearby towns or adjust time.
+            </p>
+            <p className="mt-2 text-neutral-600">
+              Know a bus that runs this route?{' '}
+              <a href="/contribute" className="text-brand-600 underline underline-offset-2 hover:text-brand-700">
+                Photograph the timetable board
+              </a>{' '}
+              and help us add it.
+            </p>
+          </div>
         ) : null}
 
         {canSearch && !error && !isSelfRoute ? (
@@ -195,6 +202,5 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         ) : null}
       </div>
     </main>
-    </>
   );
 }
