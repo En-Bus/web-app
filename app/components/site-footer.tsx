@@ -75,6 +75,11 @@ export function SiteFooter() {
                   Search
                 </Link>
               </li>
+              <li>
+                <Link href="/contribute" className="hover:text-neutral-900">
+                  Contribute timetable
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

@@ -5,6 +5,19 @@ import { PreLaunch } from './components/pre-launch';
 import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS } from './lib/seo-routes';
 import { parseBusRouteSlug, toDisplayName } from './lib/bus-search';
 
+// High-impression routes from Search Console — drives homepage quick-links
+const TRENDING_ROUTES = [
+  { href: '/bus/dindigul-to-trichy', label: 'Dindigul → Trichy' },
+  { href: '/bus/chennai-to-salem', label: 'Chennai → Salem' },
+  { href: '/bus/chennai-to-coimbatore', label: 'Chennai → Coimbatore' },
+  { href: '/bus/chennai-to-madurai', label: 'Chennai → Madurai' },
+  { href: '/bus/chennai-to-trichy', label: 'Chennai → Trichy' },
+  { href: '/bus/dindigul-to-erode', label: 'Dindigul → Erode' },
+  { href: '/bus/trichy-to-salem', label: 'Trichy → Salem' },
+  { href: '/bus/bangalore-to-chennai', label: 'Bangalore → Chennai' },
+  { href: '/bus/chennai-to-tirunelveli', label: 'Chennai → Tirunelveli' },
+];
+
 const SUPABASE_URL = 'https://hopivdsbzzfklohyllut.supabase.co';
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvcGl2ZHNienpma2xvaHlsbHV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ1MzYwMTEsImV4cCI6MjA5MDExMjAxMX0.UWJcu75b-JAEXdMirzeng14n9lPNY8s0zMkcGNzzTBM';
@@ -80,15 +93,58 @@ export default async function HomePage() {
 
         <SearchForm />
 
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold tracking-tight">
+            Search buses from
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              'Chennai',
+              'Madurai',
+              'Coimbatore',
+              'Trichy',
+              'Salem',
+              'Tirunelveli',
+              'Erode',
+              'Bangalore',
+            ].map((city) => (
+              <Link
+                key={city}
+                href={`/buses-from/${city.toLowerCase()}`}
+                className="rounded-full border border-neutral-200 px-3 py-1.5 text-sm hover:bg-brand-50 hover:border-brand-300"
+              >
+                {city}
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-500">
-          <span>2,200+ stops</span>
+          <span>2,500+ stops</span>
           <span aria-hidden="true" className="text-neutral-300">&middot;</span>
-          <span>93,000+ trips</span>
+          <span>100,000+ trips</span>
           <span aria-hidden="true" className="text-neutral-300">&middot;</span>
           <span>TNSTC, SETC &amp; MTC</span>
           <span aria-hidden="true" className="text-neutral-300">&middot;</span>
           <span>Free, no ads</span>
         </div>
+
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold tracking-tight">
+            Trending bus routes
+          </h2>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {TRENDING_ROUTES.map((route) => (
+              <Link
+                key={route.href}
+                href={route.href}
+                className="rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-center text-sm font-medium text-neutral-800 transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+              >
+                {route.label}
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold tracking-tight">

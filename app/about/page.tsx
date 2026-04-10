@@ -74,8 +74,8 @@ export default function AboutPage() {
                 </li>
               </ul>
               <p>
-                Our database currently covers <strong>2,200+ stops</strong>,{' '}
-                <strong>93,000+ trips</strong>, and <strong>3 agencies</strong>{' '}
+                Our database currently covers <strong>2,500+ stops</strong>,{' '}
+                <strong>100,000+ trips</strong>, and <strong>3 agencies</strong>{' '}
                 (TNSTC, SETC, MTC) across Tamil Nadu.
               </p>
               <p>

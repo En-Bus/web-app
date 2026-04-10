@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     template: '%s | enbus.in',
   },
   description:
-    'Search Tamil Nadu bus routes with intermediate stop support. Find TNSTC, SETC, and MTC bus timings across 2,200+ stops and 93,000+ trips.',
+    'Search Tamil Nadu bus routes with intermediate stop support. Find TNSTC, SETC, and MTC bus timings across 2,500+ stops and 100,000+ trips.',
   openGraph: {
     type: 'website',
     siteName: 'enbus.in',

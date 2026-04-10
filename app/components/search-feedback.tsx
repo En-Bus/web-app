@@ -63,7 +63,7 @@ export function SearchFeedback({ from, to, hasResults }: SearchFeedbackProps) {
     }
   }
 
-  function submitComment(formData: FormData) {
+  async function submitComment(formData: FormData) {
     const comment = (formData.get('comment') as string)?.trim();
     const phone = (formData.get('phone') as string)?.trim();
     if (!comment && !phone) return;
@@ -77,6 +77,18 @@ export function SearchFeedback({ from, to, hasResults }: SearchFeedbackProps) {
         phone: (phone || '').slice(0, 15),
       });
     }
+
+    // Persist to DB (fire-and-forget — don't block UI)
+    fetch('/api/corrections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        report_type: 'feedback',
+        from_stop: from,
+        to_stop: to,
+        comment: comment ? `${comment} | phone: ${phone ?? ''}`.slice(0, 500) : null,
+      }),
+    }).catch(() => {/* silently ignore network errors */});
 
     setState('submitted');
   }

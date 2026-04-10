@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
 
 import {
   formatStopName,
@@ -30,6 +33,43 @@ function AgencyBadge({ serviceType }: { serviceType?: string | null }) {
     <span className={`inline-flex rounded px-1.5 py-0.5 text-xs font-medium border ${colors}`}>
       {serviceType}
     </span>
+  );
+}
+
+function ReportButton({
+  routeNo,
+  boardStop,
+  alightStop,
+}: {
+  routeNo: string;
+  boardStop: string;
+  alightStop: string;
+}) {
+  const [state, setState] = useState<'idle' | 'sent'>('idle');
+
+  function report() {
+    if (state === 'sent') return;
+    setState('sent');
+    fetch('/api/corrections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        report_type: 'wrong_time',
+        route_no: routeNo,
+        from_stop: boardStop,
+        to_stop: alightStop,
+      }),
+    }).catch(() => {/* ignore */});
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={report}
+      className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+    >
+      {state === 'sent' ? 'Reported' : 'Report issue'}
+    </button>
   );
 }
 
@@ -84,10 +124,17 @@ export function SearchResults({
               <div className="mt-2 text-base font-medium text-neutral-800">
                 {getBestDisplayTime(result)}
               </div>
-              <div className="mt-1.5 text-sm leading-6 text-neutral-600">
-                {formatStopName(result.board_stop)}
-                <span className="mx-1.5 text-neutral-400" aria-hidden="true">&rarr;</span>
-                {formatStopName(result.alight_stop)}
+              <div className="mt-1.5 flex items-center justify-between gap-2">
+                <span className="text-sm leading-6 text-neutral-600">
+                  {formatStopName(result.board_stop)}
+                  <span className="mx-1.5 text-neutral-400" aria-hidden="true">&rarr;</span>
+                  {formatStopName(result.alight_stop)}
+                </span>
+                <ReportButton
+                  routeNo={result.route_no}
+                  boardStop={result.board_stop}
+                  alightStop={result.alight_stop}
+                />
               </div>
             </li>
           ))}
