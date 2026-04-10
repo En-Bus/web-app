@@ -14,7 +14,9 @@ describe('ContributeForm', () => {
     expect(screen.getByLabelText(/Timetable photo/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Bus stand name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/District/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Your name or contact/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Your name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Phone/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Submit photo/i })).toBeInTheDocument();
   });
 

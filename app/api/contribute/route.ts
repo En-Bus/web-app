@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
   const busStand = (formData.get('bus_stand') as string | null)?.trim();
   const district = (formData.get('district') as string | null)?.trim() ?? null;
   const submittedBy = (formData.get('submitted_by') as string | null)?.trim() ?? null;
+  const phone = (formData.get('phone') as string | null)?.trim() ?? null;
+  const email = (formData.get('email') as string | null)?.trim() ?? null;
 
   if (!photo || photo.size === 0) {
     return NextResponse.json({ error: 'Photo is required' }, { status: 400 });
@@ -30,6 +32,10 @@ export async function POST(request: NextRequest) {
 
   if (!busStand) {
     return NextResponse.json({ error: 'Bus stand name is required' }, { status: 400 });
+  }
+
+  if (!submittedBy) {
+    return NextResponse.json({ error: 'Your name is required' }, { status: 400 });
   }
 
   if (photo.size > MAX_FILE_SIZE) {
@@ -82,6 +88,8 @@ export async function POST(request: NextRequest) {
       bus_stand: busStand,
       district: district || null,
       submitted_by: submittedBy || null,
+      phone: phone || null,
+      email: email || null,
     }),
   });
 

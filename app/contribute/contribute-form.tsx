@@ -137,21 +137,52 @@ export function ContributeForm({ districts }: Props) {
         </select>
       </div>
 
-      {/* Optional contact */}
+      {/* Name (required) */}
       <div className="space-y-1.5">
         <label htmlFor="submitted_by" className="block text-sm font-medium text-neutral-800">
-          Your name or contact (optional)
+          Your name <span className="text-red-500">*</span>
         </label>
         <input
           id="submitted_by"
           name="submitted_by"
           type="text"
+          required
           maxLength={80}
-          placeholder="e.g. Karthik, Chennai"
+          placeholder="e.g. Karthik"
+          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-500"
+        />
+      </div>
+
+      {/* Phone (optional) */}
+      <div className="space-y-1.5">
+        <label htmlFor="phone" className="block text-sm font-medium text-neutral-800">
+          Phone <span className="text-xs font-normal text-neutral-500">(optional)</span>
+        </label>
+        <input
+          id="phone"
+          name="phone"
+          type="tel"
+          maxLength={20}
+          placeholder="e.g. 98400 00000"
+          className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-500"
+        />
+      </div>
+
+      {/* Email (optional) */}
+      <div className="space-y-1.5">
+        <label htmlFor="email" className="block text-sm font-medium text-neutral-800">
+          Email <span className="text-xs font-normal text-neutral-500">(optional)</span>
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          maxLength={100}
+          placeholder="e.g. karthik@example.com"
           className="block w-full rounded-md border border-neutral-300 px-3 py-2 text-sm shadow-sm outline-none focus:border-neutral-500"
         />
         <p className="text-xs text-neutral-500">
-          We may contact you if we need clarification. Not shown publicly.
+          We&rsquo;ll only reach out if we need clarification on your submission. Not shown publicly.
         </p>
       </div>
 
