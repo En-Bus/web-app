@@ -54,6 +54,25 @@ export default function ContributePage() {
             </ul>
           </section>
 
+          <section className="space-y-3">
+            <p className="text-sm font-medium text-neutral-700">Two ways to contribute:</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-lg border border-neutral-200 bg-white px-4 py-4 space-y-1">
+                <p className="text-sm font-semibold text-neutral-800">📋 Web form</p>
+                <p className="text-xs text-neutral-500">Fill in the details below and upload your photo directly.</p>
+              </div>
+              <a
+                href="https://t.me/enbus_bot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-neutral-200 bg-white px-4 py-4 space-y-1 hover:border-neutral-400 transition-colors block"
+              >
+                <p className="text-sm font-semibold text-neutral-800">📱 Telegram bot</p>
+                <p className="text-xs text-neutral-500">Even simpler — send the photo to <span className="font-medium">@enbus_bot</span> with the bus stand name as caption.</p>
+              </a>
+            </div>
+          </section>
+
           <ContributeForm districts={TAMIL_DISTRICTS} />
 
           <section className="space-y-2 text-sm leading-6 text-neutral-500">
