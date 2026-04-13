@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS, getHubCities } from './lib/seo-routes';
+import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS, VIA_STOP_SLUGS, getHubCities } from './lib/seo-routes';
 import { SITE_URL } from './lib/site-url';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -63,6 +63,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE_URL}/city-bus/${route}`,
       changeFrequency: 'daily',
       priority: 0.6,
+      lastModified,
+    });
+  }
+
+  // Via-stop pages — buses passing through intermediate towns
+  for (const stop of VIA_STOP_SLUGS) {
+    urls.push({
+      url: `${SITE_URL}/via/${stop}`,
+      changeFrequency: 'weekly',
+      priority: 0.7,
       lastModified,
     });
   }

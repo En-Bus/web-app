@@ -562,3 +562,37 @@ export const CITY_BUS_ROUTE_SLUGS = [
   'mgr-bus-stand-to-periyar-bus-stand',
   'periyar-bus-stand-to-mgr-bus-stand',
 ] as const;
+
+// Via-stop slugs — intermediate towns that buses pass through.
+// Powers /via/[stop] pages — blue ocean SEO, no competitor has these.
+// Only include stops verified to have intermediate stop_times data in the DB.
+// More stops will be added as TNSTC scraper data (Phase 3) populates stop_times.
+export const VIA_STOP_SLUGS = [
+  // High count (30+ buses) — best SEO value
+  'palani',
+  'ooty',
+  'madurai',
+  'coimbatore',
+  'avinashi',
+  'ramanathapuram',
+  'tirumangalam',
+  'melur',
+  'sholavandan',
+  'kovilpatti',
+  // Medium count (5–29 buses)
+  'karur',
+  'usilampatti',
+  'perundurai',
+  'sankagiri',
+  'dindigul',
+  'namakkal',
+  'shenkottai',
+  // Lower count (1–4 buses) — kept as they'll grow with more data
+  'mettupalayam',
+  'udumalpet',
+  'batlagundu',
+  'natham',
+  'dharapuram',
+  'sathyamangalam',
+  'chidambaram',
+] as const;

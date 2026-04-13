@@ -236,6 +236,41 @@ export async function fetchTripStops(
   }
 }
 
+export type ViaStopResult = {
+  trip_id: string;
+  via_time: string | null;
+  route_no: string;
+  service_type: string | null;
+  origin: string;
+  origin_time: string | null;
+  destination: string;
+  dest_time: string | null;
+};
+
+export type ViaStopsResponse = {
+  results: ViaStopResult[];
+  count: number;
+  stop: string;
+};
+
+export async function fetchViaStops(
+  stopSlug: string,
+): Promise<{ data: ViaStopsResponse | null; error: string | null }> {
+  const params = new URLSearchParams({ stop: slugToQuery(stopSlug) });
+  const response = await fetch(`${API_BASE_URL}/via-stops?${params}`, {
+    next: { revalidate: 86400 },
+  });
+  if (!response.ok) {
+    return { data: null, error: `Via stops request failed with status ${response.status}.` };
+  }
+  try {
+    const data = (await response.json()) as ViaStopsResponse;
+    return { data, error: null };
+  } catch {
+    return { data: null, error: 'Invalid response from via stops API.' };
+  }
+}
+
 export async function fetchSearchResults(
   fromSlug: string,
   toSlug: string,
