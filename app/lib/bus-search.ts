@@ -13,10 +13,75 @@ export type SearchResult = {
   service_type?: string | null;
   departs_at?: string | null;
   boards_at: string | null;
+  arrives_at?: string | null;
   board_stop: string;
+  board_stop_id?: string | null;
   alight_stop: string;
+  alight_stop_id?: string | null;
   distance_km?: string | null;
 };
+
+// ─── Fare calculation (arasubus.tn.gov.in published rates) ───────────────────
+// Rates in paise per km:
+//   Ordinary 58 · Express 75 · Deluxe/SuperExpress 85 · Ultra Deluxe 100
+//   AC 130 · AC Volvo 170 · AC Sleeper 180 (lean) · Non-AC Sleeper 135 (lean)
+
+function fareRateForServiceType(serviceType: string): number {
+  const s = serviceType.toLowerCase().replace(/[\s_-]+/g, '');
+  if (s.includes('volvo'))                                return 170;
+  if (s.includes('acsleeper') || s.includes('sleeper'))  return 180;
+  if (s.includes('nonac'))                                return 135;
+  if (s.includes('ac'))                                   return 130;
+  if (s.includes('ultra') || s.includes('ultradeluxe'))  return 100;
+  if (s.includes('deluxe') || s.includes('superdel'))     return 85;
+  if (s.includes('express'))                              return 75;
+  return 58; // Ordinary default
+}
+
+export function calculateFare(
+  distanceKm: number | string | null | undefined,
+  serviceType: string | null | undefined,
+): number | null {
+  if (!distanceKm || !serviceType) return null;
+  const dist = typeof distanceKm === 'string' ? parseFloat(distanceKm) : distanceKm;
+  if (!dist || isNaN(dist) || dist <= 0) return null;
+  const rate = fareRateForServiceType(serviceType);
+  // Minimum fare ₹10; round to nearest rupee
+  return Math.max(10, Math.round((dist * rate) / 100));
+}
+
+export function calculateFareRange(
+  results: SearchResult[],
+): { min: number; max: number } | null {
+  const fares = results
+    .map((r) => calculateFare(r.distance_km, r.service_type))
+    .filter((f): f is number => f !== null);
+  if (fares.length === 0) return null;
+  return { min: Math.min(...fares), max: Math.max(...fares) };
+}
+
+export function calculateDuration(departure: string, arrival: string): string | null {
+  const depParts = departure.slice(0, 5).split(':').map(Number);
+  const arrParts = arrival.slice(0, 5).split(':').map(Number);
+  const dh = depParts[0] ?? NaN;
+  const dm = depParts[1] ?? NaN;
+  const ah = arrParts[0] ?? NaN;
+  const am = arrParts[1] ?? NaN;
+  if (isNaN(dh) || isNaN(dm) || isNaN(ah) || isNaN(am)) return null;
+
+  let depMins = dh * 60 + dm;
+  let arrMins = ah * 60 + am;
+  if (arrMins <= depMins) arrMins += 24 * 60; // overnight journey
+
+  const diff = arrMins - depMins;
+  if (diff <= 0 || diff > 24 * 60) return null;
+
+  const hours = Math.floor(diff / 60);
+  const mins = diff % 60;
+  if (hours === 0) return `${mins}min`;
+  if (mins === 0) return `${hours}h`;
+  return `${hours}h ${mins}min`;
+}
 
 export type SearchResponse = {
   results: SearchResult[];
@@ -36,8 +101,44 @@ export function getParamValue(value: string | string[] | undefined): string {
   return value ?? '';
 }
 
+const COLLOQUIAL_NAMES: Record<string, string> = {
+  'covai': 'coimbatore',
+  'pondy': 'puducherry',
+  'pondicherry': 'puducherry',
+  'trichy': 'tiruchirappalli',
+  'tiruchi': 'tiruchirappalli',
+  'madras': 'chennai',
+  'tanjore': 'thanjavur',
+  'tindivanam': 'tindivanam',
+  'tuticorin': 'thoothukudi',
+  'nellai': 'tirunelveli',
+  'cape comorin': 'kanyakumari',
+};
+
+function applyColloquial(value: string): string {
+  const lowered = value.trim().toLowerCase();
+  if (COLLOQUIAL_NAMES[lowered]) return COLLOQUIAL_NAMES[lowered];
+  const slugged = lowered
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return COLLOQUIAL_NAMES[slugged] ?? lowered;
+}
+
 export function normalizeSlug(value: string): string {
   return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export function normalizeQuerySlug(value: string): string {
+  const canonical = applyColloquial(value);
+  return canonical
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
@@ -103,6 +204,38 @@ export function parseBusRouteSlug(routeSlug: string): {
   return { fromSlug, toSlug };
 }
 
+function bucketTime(time: string): string {
+  const [h, m] = time.split(':').map(Number);
+  const bucketed = Math.floor(m / 15) * 15;
+  return `${String(h).padStart(2, '0')}:${String(bucketed).padStart(2, '0')}`;
+}
+
+export type TripStop = {
+  stop_name: string;
+  stop_sequence: number;
+  departure_time: string | null;
+};
+
+export async function fetchTripStops(
+  tripId: string,
+): Promise<{ stops: TripStop[] | null; error: string | null }> {
+  const params = new URLSearchParams({ trip_id: tripId });
+  const response = await fetch(`${API_BASE_URL}/trip-stops?${params.toString()}`, {
+    next: { revalidate: 86400 },
+  });
+
+  if (!response.ok) {
+    return { stops: null, error: `Trip stops request failed with status ${response.status}.` };
+  }
+
+  try {
+    const data = (await response.json()) as { stops: TripStop[] };
+    return { stops: data.stops ?? [], error: null };
+  } catch {
+    return { stops: null, error: 'Invalid response from trip stops API.' };
+  }
+}
+
 export async function fetchSearchResults(
   fromSlug: string,
   toSlug: string,
@@ -115,14 +248,16 @@ export async function fetchSearchResults(
   });
 
   if (time) {
-    params.set('time', time);
+    params.set('time', bucketTime(time));
   }
 
   if (type) {
     params.set('type', type);
   }
 
-  const response = await fetch(`${API_BASE_URL}/search?${params.toString()}`);
+  const response = await fetch(`${API_BASE_URL}/search?${params.toString()}`, {
+    next: { revalidate: 900 },
+  });
 
   if (!response.ok) {
     return {
@@ -150,8 +285,11 @@ export async function fetchSearchResults(
       service_type: (rawResult as SearchResult).service_type ?? null,
       departs_at: (rawResult as SearchResult).departs_at ?? null,
       boards_at: rawResult.boards_at,
+      arrives_at: (rawResult as SearchResult).arrives_at ?? null,
       board_stop: rawResult.board_stop,
+      board_stop_id: (rawResult as SearchResult).board_stop_id ?? null,
       alight_stop: rawResult.alight_stop,
+      alight_stop_id: (rawResult as SearchResult).alight_stop_id ?? null,
       distance_km: (rawResult as SearchResult).distance_km ?? null,
     };
 

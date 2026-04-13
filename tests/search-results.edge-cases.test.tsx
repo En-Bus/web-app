@@ -71,10 +71,10 @@ describe('SearchResults component', () => {
 
   it('formats stop names with title case', () => {
     const { container } = render(<SearchResults fromSlug="a" toSlug="b" results={[baseResult]} />);
-    // Stop names are inside the list item alongside the arrow separator.
-    const listItem = container.querySelector('li');
-    expect(listItem?.textContent).toContain('Koyambedu');
-    expect(listItem?.textContent).toContain('Madurai');
+    // Stop names are inside bus card list items (rounded-lg); band headers are also <li>s
+    const busCard = container.querySelector('li.rounded-lg');
+    expect(busCard?.textContent).toContain('Koyambedu');
+    expect(busCard?.textContent).toContain('Madurai');
   });
 
   it('shows "Time unknown" for results with no time', () => {

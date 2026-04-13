@@ -4,10 +4,13 @@ import { notFound } from 'next/navigation';
 
 import { SearchForm } from '../../components/search-form';
 import { Breadcrumb } from '../../components/breadcrumb';
-import { FAQJsonLd } from '../../components/json-ld';
+import { FAQJsonLd, BusTripsJsonLd } from '../../components/json-ld';
 import {
   buildBusRouteSlug,
+  calculateDuration,
+  calculateFareRange,
   fetchSearchResults,
+  fetchTripStops,
   parseBusRouteSlug,
   toDisplayName,
 } from '../../lib/bus-search';
@@ -55,11 +58,17 @@ export async function generateMetadata({
     };
   }
 
+  const year = new Date().getFullYear();
+
   return {
-    title: `${fromName} to ${toName} Bus Timings (2026)`,
-    description: `Compare TNSTC & SETC buses from ${fromName} to ${toName} — timings, stops, and routes including intermediate stops. Updated for 2026.`,
+    title: `${fromName} to ${toName} Bus — Timings & Stops (${year})`,
+    description: `Find government buses from ${fromName} to ${toName} with departure times, stops, and TNSTC & SETC services. Updated for ${year}.`,
     alternates: {
       canonical: `/bus/${route}`,
+    },
+    openGraph: {
+      title: `${fromName} to ${toName} Bus Timings — TNSTC & SETC`,
+      description: `Find TNSTC & SETC buses from ${fromName} to ${toName} with intermediate stops.`,
     },
   };
 }
@@ -80,12 +89,81 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
   const fromName = toDisplayName(fromSlug);
   const toName = toDisplayName(toSlug);
   const searchState = await fetchSearchResults(fromSlug, toSlug, '00:00', 'inter-city');
-  const hasResults = Boolean(searchState.data?.results?.length);
-  const resultCount = searchState.data?.results?.length ?? 0;
+  const results = searchState.data?.results ?? [];
+  const resultCount = results.length;
+  const hasResults = Boolean(resultCount);
+  const year = new Date().getFullYear();
+
+  const serviceCounts = results.reduce<Record<string, { count: number; display: string }>>(
+    (acc, result) => {
+      const raw = result.service_type?.trim();
+      if (!raw) return acc;
+      const key = raw.toUpperCase();
+      if (!acc[key]) acc[key] = { count: 0, display: raw };
+      acc[key].count++;
+      return acc;
+    },
+    {},
+  );
+
+  const serviceBreakdown = Object.values(serviceCounts)
+    .sort((a, b) => b.count - a.count)
+    .map(({ count, display }) => `${count} ${display}`);
+
+  const firstLastTimes = results
+    .map((result) => result.boards_at ?? result.departs_at)
+    .filter((time): time is string => Boolean(time));
+
+  const firstBusTime = firstLastTimes.length
+    ? firstLastTimes.reduce((earliest, current) => (current < earliest ? current : earliest))
+    : null;
+
+  const lastBusTime = firstLastTimes.length
+    ? firstLastTimes.reduce((latest, current) => (current > latest ? current : latest))
+    : null;
+
+  const distanceKm = results.find((result) => result.distance_km)?.distance_km ?? null;
+  const rawDist = Number(distanceKm);
+  const formattedDistance = distanceKm
+    ? `~${rawDist >= 100 ? Math.round(rawDist / 5) * 5 : Math.round(rawDist)} km`
+    : null;
+
+  const firstBusLabel = firstBusTime ? firstBusTime.slice(0, 5) : 'Not available';
+  const lastBusLabel = lastBusTime ? lastBusTime.slice(0, 5) : 'Not available';
+  const serviceBreakdownLabel = serviceBreakdown.length
+    ? serviceBreakdown.join(', ')
+    : 'Multiple bus types';
+
+  // Fare range (Option A: show min–max across all service types)
+  const fareRange = calculateFareRange(results);
+
+  // Average duration for FAQ
+  const durations = results
+    .map((r) => {
+      const dep = r.boards_at ?? r.departs_at;
+      const arr = r.arrives_at && r.arrives_at !== '00:00:00' ? r.arrives_at : null;
+      return dep && arr ? calculateDuration(dep, arr) : null;
+    })
+    .filter((d): d is string => d !== null);
+  const medianDuration = durations.length > 0 ? (durations[Math.floor(durations.length / 2)] ?? null) : null;
+
+  // AC bus count for FAQ
+  const acCount = results.filter((r) => {
+    const s = (r.service_type ?? '').toLowerCase();
+    return s.includes('ac') || s.includes('volvo') || s.includes('sleeper');
+  }).length;
 
   if (!searchState.error && !hasResults) {
     notFound();
   }
+
+  // Fetch stop sequence for the first result that has a trip_id
+  const representativeTrip = results.find((r) => r.trip_id) ?? null;
+  const tripStopsResult = representativeTrip?.trip_id
+    ? await fetchTripStops(representativeTrip.trip_id)
+    : null;
+  const tripStops = tripStopsResult?.stops ?? [];
+
   const seoSuggestions = SEO_ROUTE_SLUGS.filter((slug) => slug.startsWith(`${fromSlug}-to-`))
     .map((slug) => parseBusRouteSlug(slug))
     .filter((parsed): parsed is { fromSlug: string; toSlug: string } => Boolean(parsed))
@@ -103,6 +181,16 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
   }));
 
   const popularRoutes = [...seoSuggestions, ...curatedFallback].slice(0, 5);
+
+  const reverseRouteSuggestions = SEO_ROUTE_SLUGS.filter((slug) => slug.startsWith(`${toSlug}-to-`))
+    .map((slug) => parseBusRouteSlug(slug))
+    .filter((parsed): parsed is { fromSlug: string; toSlug: string } => Boolean(parsed))
+    .filter((parsed) => parsed.toSlug !== fromSlug && parsed.toSlug !== toSlug)
+    .map((parsed) => ({
+      href: `/bus/${buildBusRouteSlug(toSlug, parsed.toSlug)}`,
+      label: `${toName} to ${toDisplayName(parsed.toSlug)} bus timings`,
+    }))
+    .slice(0, 5);
 
   const breadcrumbItems = [
     { name: 'Home', href: '/' },
@@ -131,13 +219,31 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     <Breadcrumb items={breadcrumbItems} />
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="space-y-8">
-        <section className="space-y-2">
+        <section className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight">
             {fromName} to {toName} Bus Timings
           </h1>
           <p className="text-sm text-neutral-500">
-            {resultCount} bus{resultCount !== 1 ? 'es' : ''} found &middot; TNSTC &amp; SETC services &middot; Updated 2026
+            {serviceBreakdownLabel} &middot; TNSTC &amp; SETC services &middot; Updated {year}
           </p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-neutral-600">
+            {formattedDistance ? (
+              <span>{formattedDistance}</span>
+            ) : null}
+            {medianDuration ? (
+              <span>~{medianDuration}</span>
+            ) : null}
+            <span>{resultCount} bus{resultCount !== 1 ? 'es' : ''}</span>
+            <span>First: <span className="font-medium">{firstBusLabel}</span></span>
+            <span>Last: <span className="font-medium">{lastBusLabel}</span></span>
+            {fareRange ? (
+              <span className="font-medium text-emerald-700">
+                {fareRange.min === fareRange.max
+                  ? `₹${fareRange.min}`
+                  : `₹${fareRange.min}–₹${fareRange.max}`}
+              </span>
+            ) : null}
+          </div>
         </section>
 
         <SearchForm defaultFrom={fromName} defaultTo={toName} />
@@ -149,6 +255,28 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           showSeoLink={false}
         />
 
+        {tripStops.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold tracking-tight">
+              Stops on this route
+            </h2>
+            <p className="text-xs text-neutral-500">
+              Intermediate stops for route {representativeTrip?.route_no} — other buses may have different stops.
+            </p>
+            <ol className="relative border-l border-neutral-200 pl-5 space-y-2">
+              {tripStops.map((stop, i) => (
+                <li key={i} className="relative">
+                  <span className="absolute -left-[1.15rem] top-[0.35rem] h-2 w-2 rounded-full border border-neutral-300 bg-white" />
+                  <span className="text-sm text-neutral-800">{stop.stop_name}</span>
+                  {stop.departure_time ? (
+                    <span className="ml-2 text-xs text-neutral-500">{stop.departure_time.slice(0, 5)}</span>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
         <section className="space-y-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 sm:p-5">
           <h2 className="text-lg font-semibold tracking-tight">
             About {fromName} to {toName} buses
@@ -156,26 +284,69 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           <div className="space-y-2 text-sm leading-6 text-neutral-700">
             <p>
               {resultCount} TNSTC and SETC buses operate between {fromName} and {toName}.
-              enbus.in matches intermediate stops too, so you can find buses
-              even if {fromName} or {toName} is a mid-route stop.
+              enbus.in matches intermediate stops too, so you can find buses even if
+              {fromName} or {toName} is a mid-route stop.
             </p>
             <p>
-              Bus types include Express, Super Deluxe, Ultra Deluxe, A/C Sleeper,
-              and Semi-Sleeper services depending on the route.
+              Bus types include {serviceBreakdownLabel.toLowerCase()}, with first departures around {firstBusLabel}
+              and last buses near {lastBusLabel}.
             </p>
+            {formattedDistance ? (
+              <p>
+                Typical route distance is {formattedDistance}, so plan buffer time for boarding and traffic.
+              </p>
+            ) : null}
           </div>
         </section>
+
+        <BusTripsJsonLd
+          fromName={fromName}
+          toName={toName}
+          trips={(searchState.data?.results ?? []).map((r) => ({
+            routeNo: r.route_no,
+            serviceType: r.service_type ?? null,
+            boardStop: r.board_stop,
+            alightStop: r.alight_stop,
+            departsAt: r.boards_at ?? r.departs_at ?? null,
+          }))}
+        />
 
         <FAQJsonLd
           questions={[
             {
-              question: `How many buses run from ${fromName} to ${toName}?`,
-              answer: `There are ${resultCount} buses operating from ${fromName} to ${toName}, including TNSTC and SETC services.`,
+              question: `How many government buses run from ${fromName} to ${toName}?`,
+              answer: `There are ${resultCount} TNSTC and SETC government buses operating from ${fromName} to ${toName}.`,
             },
             {
               question: `Can I find buses that stop at ${fromName} or ${toName} mid-route?`,
               answer: `Yes. enbus.in searches intermediate stops, so you can find buses even if ${fromName} or ${toName} is not the origin or terminus.`,
             },
+            {
+              question: `What time is the first bus from ${fromName} to ${toName}?`,
+              answer: `The first bus departs at ${firstBusLabel}.`,
+            },
+            {
+              question: `What time is the last bus from ${fromName} to ${toName}?`,
+              answer: `The last bus departs at ${lastBusLabel}.`,
+            },
+            {
+              question: `What types of buses run from ${fromName} to ${toName}?`,
+              answer: `Bus types include ${serviceBreakdownLabel}.`,
+            },
+            ...(medianDuration ? [{
+              question: `How long does the journey from ${fromName} to ${toName} take?`,
+              answer: `The journey from ${fromName} to ${toName} typically takes around ${medianDuration}. Actual travel time may vary with boarding stops and traffic.`,
+            }] : []),
+            ...(fareRange ? [{
+              question: `What is the bus fare from ${fromName} to ${toName}?`,
+              answer: fareRange.min === fareRange.max
+                ? `The approximate bus fare from ${fromName} to ${toName} is ₹${fareRange.min}, based on official TNSTC rates.`
+                : `Bus fares from ${fromName} to ${toName} range from approximately ₹${fareRange.min} (Express) to ₹${fareRange.max} (AC/Ultra Deluxe), based on official TNSTC rates.`,
+            }] : []),
+            ...(acCount > 0 ? [{
+              question: `Are there AC buses from ${fromName} to ${toName}?`,
+              answer: `Yes, ${acCount} AC or Ultra Deluxe bus${acCount !== 1 ? 'es' : ''} run${acCount === 1 ? 's' : ''} from ${fromName} to ${toName}.`,
+            }] : []),
           ]}
         />
 
@@ -184,18 +355,47 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
             Popular routes from {fromName}
           </h2>
           <ul className="space-y-2">
-          {popularRoutes.map((route) => (
-            <li key={route.href}>
-              <Link
-                href={route.href}
-                className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
-              >
-                {route.label}
-              </Link>
-            </li>
-          ))}
+            {popularRoutes.map((route) => (
+              <li key={route.href}>
+                <Link
+                  href={route.href}
+                  className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
+                >
+                  {route.label}
+                </Link>
+              </li>
+            ))}
           </ul>
+          <p className="text-sm text-neutral-500">
+            Looking for the return journey?{' '}
+            <Link
+              href={`/bus/${buildBusRouteSlug(toSlug, fromSlug)}`}
+              className="text-brand-600 underline underline-offset-2 hover:text-brand-700"
+            >
+              {toName} to {fromName} bus timings
+            </Link>
+          </p>
         </section>
+
+        {reverseRouteSuggestions.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold tracking-tight">
+              Popular routes from {toName}
+            </h2>
+            <ul className="space-y-2">
+              {reverseRouteSuggestions.map((route) => (
+                <li key={route.href}>
+                  <Link
+                    href={route.href}
+                    className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
+                  >
+                    {route.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </main>
     </>
