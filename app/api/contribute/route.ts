@@ -99,36 +99,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to save submission' }, { status: 500 });
   }
 
-  // Send email notification (fire-and-forget — don't fail submission if email fails)
-  const resendKey = process.env.RESEND_API_KEY;
-  const notifyEmail = process.env.NOTIFY_EMAIL;
-  if (resendKey && notifyEmail) {
-    fetch('https://api.resend.com/emails', {
+  // Telegram notification (fire-and-forget — don't fail submission if this fails)
+  const tgToken = process.env.TELEGRAM_BOT_TOKEN;
+  const tgChatId = process.env.TELEGRAM_CHAT_ID;
+  if (tgToken && tgChatId) {
+    const lines = [
+      `📸 *New timetable submission*`,
+      `🚌 ${busStand}${district ? ` (${district})` : ''}`,
+      `👤 ${submittedBy}${phone ? ` · ${phone}` : ''}${email ? ` · ${email}` : ''}`,
+      `🔗 [View photo](${photoUrl})`,
+    ];
+    fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: 'enbus.in <noreply@enbus.in>',
-        to: [notifyEmail],
-        subject: `New timetable photo — ${busStand}`,
-        html: `
-          <p>A new timetable photo was submitted on enbus.in.</p>
-          <table cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:14px">
-            <tr><td style="color:#666">Bus stand</td><td><strong>${busStand}</strong></td></tr>
-            ${district ? `<tr><td style="color:#666">District</td><td>${district}</td></tr>` : ''}
-            <tr><td style="color:#666">Submitted by</td><td>${submittedBy}</td></tr>
-            ${phone ? `<tr><td style="color:#666">Phone</td><td>${phone}</td></tr>` : ''}
-            ${email ? `<tr><td style="color:#666">Email</td><td>${email}</td></tr>` : ''}
-            <tr><td style="color:#666">Photo</td><td><a href="${photoUrl}">${photoUrl}</a></td></tr>
-          </table>
-          <p style="margin-top:16px;font-size:12px;color:#999">
-            <a href="https://supabase.com/dashboard/project/hopivdsbzzfklohyllut/editor">View in Supabase →</a>
-          </p>
-        `,
+        chat_id: tgChatId,
+        text: lines.join('\n'),
+        parse_mode: 'Markdown',
       }),
-    }).catch((err) => console.error('Email notification failed:', err));
+    }).catch((err) => console.error('Telegram notification failed:', err));
   }
 
   return NextResponse.json({ success: true });
