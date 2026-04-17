@@ -23,7 +23,7 @@ export function GAAnalytics() {
     gtag('config', GA_MEASUREMENT_ID, { page_path: url });
   }, [pathname, searchParams]);
 
-  if (!GA_MEASUREMENT_ID) return null;
+  if (!GA_MEASUREMENT_ID || process.env.NODE_ENV !== 'production') return null;
 
   return (
     <>
