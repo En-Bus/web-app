@@ -7,7 +7,7 @@ import { SiteFooter } from './components/site-footer';
 import { WebSiteJsonLd, OrganizationJsonLd } from './components/json-ld';
 import { SITE_URL } from './lib/site-url';
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-7Y3T74TKPG';
+const GA_ID = (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-7Y3T74TKPG').trim();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
