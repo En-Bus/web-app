@@ -97,7 +97,7 @@ export const SEO_ROUTE_SLUGS = [
   'salem-to-coimbatore',
   'salem-to-tirunelveli',
   'salem-to-erode',
-  'salem-to-bangalore',
+
   'salem-to-thanjavur',
   'salem-to-kumbakonam',
   'salem-to-nagercoil',
@@ -192,10 +192,8 @@ export const SEO_ROUTE_SLUGS = [
   'bangalore-to-tirunelveli',
   'bangalore-to-thanjavur',
   'bangalore-to-kumbakonam',
-  'bangalore-to-nagercoil',
   'bangalore-to-karaikudi',
   'bangalore-to-puducherry',
-  'bangalore-to-kanyakumari',
   'bangalore-to-pollachi',
   'bangalore-to-palani',
   'bangalore-to-marthandam',
@@ -426,7 +424,7 @@ export const SEO_ROUTE_SLUGS = [
   'tiruchirappalli-to-pollachi',
   'tiruchirappalli-to-palani',
   'tiruchirappalli-to-ooty',
-  'tiruchirappalli-to-kodaikanal',
+
   // Thoothukudi (Tuticorin)
   'thoothukudi-to-chennai',
   'thoothukudi-to-madurai',
@@ -558,7 +556,6 @@ export const CITY_BUS_ROUTE_SLUGS = [
   'melur-to-arappalayam',
   // From MGR Bus Stand (Mattuthavani)
   'mgr-bus-stand-to-airport',
-  'airport-to-mgr-bus-stand',
   'mgr-bus-stand-to-periyar-bus-stand',
   'periyar-bus-stand-to-mgr-bus-stand',
 ] as const;
@@ -590,9 +587,7 @@ export const VIA_STOP_SLUGS = [
   // Lower count (1–4 buses) — kept as they'll grow with more data
   'mettupalayam',
   'udumalpet',
-  'batlagundu',
   'natham',
   'dharapuram',
   'sathyamangalam',
-  'chidambaram',
 ] as const;

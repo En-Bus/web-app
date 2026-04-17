@@ -13,7 +13,7 @@
  * Uses the production API by default; override with CHECK_API_BASE_URL env var.
  */
 
-import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS } from '../app/lib/seo-routes.ts';
+import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../app/lib/seo-routes.ts';
 
 const API_BASE =
   process.env.CHECK_API_BASE_URL ??
@@ -69,12 +69,28 @@ async function runWithConcurrency<T>(
   await Promise.all(workers);
 }
 
+async function checkViaSlug(slug: string): Promise<boolean> {
+  const stopName = slug.replace(/-+/g, ' ').trim();
+  const params = new URLSearchParams({ stop: stopName });
+  try {
+    const res = await fetch(`${API_BASE}/via-stops?${params}`, {
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!res.ok) return false;
+    const data = (await res.json()) as { count?: number };
+    return (data.count ?? 0) > 0;
+  } catch {
+    return false;
+  }
+}
+
 async function main() {
   const interCitySlugs = [...SEO_ROUTE_SLUGS];
   const cityBusSlugs = [...CITY_BUS_ROUTE_SLUGS];
-  const total = interCitySlugs.length + cityBusSlugs.length;
+  const viaStopSlugs = [...VIA_STOP_SLUGS];
+  const total = interCitySlugs.length + cityBusSlugs.length + viaStopSlugs.length;
 
-  console.log(`Checking ${interCitySlugs.length} inter-city + ${cityBusSlugs.length} city bus routes...`);
+  console.log(`Checking ${interCitySlugs.length} inter-city + ${cityBusSlugs.length} city bus + ${viaStopSlugs.length} via-stop routes...`);
   console.log(`API: ${API_BASE}\n`);
 
   const broken: string[] = [];
@@ -91,8 +107,20 @@ async function main() {
     }
   };
 
+  const checkViaAndReport = async (slug: string) => {
+    const ok = await checkViaSlug(slug);
+    checked++;
+    if (!ok) {
+      broken.push(`/via/${slug}`);
+      process.stdout.write(`  FAIL: /via/${slug}\n`);
+    } else {
+      process.stdout.write(`  [${checked}/${total}] OK: via/${slug}\r`);
+    }
+  };
+
   await runWithConcurrency(interCitySlugs, CONCURRENCY, checkAndReport('inter-city'));
   await runWithConcurrency(cityBusSlugs, CONCURRENCY, checkAndReport('city'));
+  await runWithConcurrency(viaStopSlugs, CONCURRENCY, checkViaAndReport);
 
   console.log(`\n\nChecked ${checked}/${total} routes.`);
 
