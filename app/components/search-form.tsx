@@ -4,12 +4,14 @@ type SearchFormProps = {
   defaultFrom?: string;
   defaultTo?: string;
   defaultTime?: string;
+  defaultType?: 'inter-city' | 'city';
 };
 
 export function SearchForm({
   defaultFrom = '',
   defaultTo = '',
   defaultTime = '',
+  defaultType,
 }: SearchFormProps) {
   return (
     <form
@@ -17,6 +19,9 @@ export function SearchForm({
       method="get"
       className="space-y-4 rounded-lg border border-neutral-200 bg-white p-4 sm:p-5"
     >
+      {defaultType ? (
+        <input type="hidden" name="type" value={defaultType} />
+      ) : null}
       <div className="space-y-2">
         <label htmlFor="from" className="block text-sm font-medium">
           From

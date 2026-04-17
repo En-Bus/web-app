@@ -75,6 +75,59 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   );
 }
 
+export type BusTripData = {
+  routeNo: string;
+  serviceType: string | null;
+  boardStop: string;
+  alightStop: string;
+  departsAt: string | null;
+};
+
+export function BusTripsJsonLd({
+  trips,
+  fromName,
+  toName,
+}: {
+  trips: BusTripData[];
+  fromName: string;
+  toName: string;
+}) {
+  if (trips.length === 0) return null;
+
+  return (
+    <JsonLd
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: `Buses from ${fromName} to ${toName}`,
+        numberOfItems: trips.length,
+        itemListElement: trips.slice(0, 20).map((trip, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'BusTrip',
+            name: `${trip.routeNo}${trip.serviceType ? ` (${trip.serviceType})` : ''} — ${fromName} to ${toName}`,
+            departureBusStop: {
+              '@type': 'BusStop',
+              name: trip.boardStop,
+            },
+            arrivalBusStop: {
+              '@type': 'BusStop',
+              name: trip.alightStop,
+            },
+            ...(trip.departsAt ? { departureTime: trip.departsAt } : {}),
+            busName: trip.routeNo,
+            provider: {
+              '@type': 'Organization',
+              name: 'TNSTC',
+            },
+          },
+        })),
+      }}
+    />
+  );
+}
+
 export function FAQJsonLd({
   questions,
 }: {
