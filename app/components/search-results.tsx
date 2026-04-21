@@ -7,6 +7,7 @@ import {
   calculateDuration,
   formatStopName,
   getBestDisplayTime,
+  to12h,
   type BusType,
   type SearchResult,
 } from '../lib/bus-search';
@@ -156,7 +157,7 @@ export function SearchResults({
 
               const dep = result.boards_at ?? result.departs_at;
               const arrRaw = result.arrives_at && result.arrives_at !== '00:00:00' ? result.arrives_at : null;
-              const arrivesAt = arrRaw ? arrRaw.slice(0, 5) : null;
+              const arrivesAt = to12h(arrRaw) || null;
               const duration = dep && arrRaw ? calculateDuration(dep, arrRaw) : null;
 
               items.push(

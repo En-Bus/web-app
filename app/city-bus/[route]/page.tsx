@@ -10,6 +10,7 @@ import {
   calculateDuration,
   fetchSearchResults,
   parseBusRouteSlug,
+  to12h,
   toDisplayName,
 } from '../../lib/bus-search';
 import { SearchResults } from '../../components/search-results';
@@ -120,8 +121,8 @@ export default async function CityBusRoutePage({
     ? `~${rawDist >= 100 ? Math.round(rawDist / 5) * 5 : Math.round(rawDist)} km`
     : null;
 
-  const firstBusLabel = firstBusTime ? firstBusTime.slice(0, 5) : 'Not available';
-  const lastBusLabel = lastBusTime ? lastBusTime.slice(0, 5) : 'Not available';
+  const firstBusLabel = to12h(firstBusTime) || 'Not available';
+  const lastBusLabel = to12h(lastBusTime) || 'Not available';
   const serviceBreakdownLabel = serviceBreakdown.length
     ? serviceBreakdown.join(', ')
     : 'Multiple bus types';

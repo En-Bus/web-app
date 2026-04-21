@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { Breadcrumb } from '../../components/breadcrumb';
 import { FAQJsonLd } from '../../components/json-ld';
-import { fetchViaStops, toDisplayName, normalizeSlug } from '../../lib/bus-search';
+import { fetchViaStops, to12h, toDisplayName, normalizeSlug } from '../../lib/bus-search';
 import { VIA_STOP_SLUGS, SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
 export function generateStaticParams() {
@@ -31,8 +31,7 @@ export async function generateMetadata({ params }: ViaStopPageProps): Promise<Me
 }
 
 function formatTime(time: string | null | undefined): string {
-  if (!time) return '';
-  return time.slice(0, 5);
+  return to12h(time);
 }
 
 function titleCase(name: string): string {

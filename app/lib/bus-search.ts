@@ -176,8 +176,19 @@ export function formatStopName(value: string): string {
     .replace(/\b([a-z])/g, (match) => match.toUpperCase());
 }
 
+export function to12h(time: string | null | undefined): string {
+  if (!time || time === '00:00:00') return '';
+  const [hStr, mStr] = time.split(':');
+  const h = parseInt(hStr, 10);
+  const m = mStr ?? '00';
+  const period = h < 12 ? 'AM' : 'PM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${m} ${period}`;
+}
+
 export function getBestDisplayTime(result: SearchResult): string {
-  return result.boards_at ?? result.departs_at ?? 'Time unknown';
+  const raw = result.boards_at ?? result.departs_at;
+  return to12h(raw) || 'Time unknown';
 }
 
 export function buildBusRouteSlug(fromSlug: string, toSlug: string): string {
