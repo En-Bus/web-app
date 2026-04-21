@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { SearchForm } from '../../components/search-form';
 import { Breadcrumb } from '../../components/breadcrumb';
-import { FAQJsonLd, BusTripsJsonLd } from '../../components/json-ld';
+import { FAQJsonLd, BusTripsJsonLd, BusRouteJsonLd } from '../../components/json-ld';
 import {
   buildBusRouteSlug,
   calculateDuration,
@@ -113,7 +113,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
 
   const firstLastTimes = results
     .map((result) => result.boards_at ?? result.departs_at)
-    .filter((time): time is string => Boolean(time));
+    .filter((time): time is string => Boolean(time) && time !== '00:00:00');
 
   const firstBusTime = firstLastTimes.length
     ? firstLastTimes.reduce((earliest, current) => (current < earliest ? current : earliest))
@@ -256,6 +256,20 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           showSeoLink={false}
         />
 
+        <div className="flex flex-col gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-emerald-800">
+            Book seats online for TNSTC &amp; SETC buses
+          </p>
+          <a
+            href="https://www.tnstc.in/OTRSOnline/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+          >
+            Book on TNSTC →
+          </a>
+        </div>
+
         {tripStops.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xl font-semibold tracking-tight">
@@ -300,16 +314,28 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           </div>
         </section>
 
+        <BusRouteJsonLd
+          fromName={fromName}
+          toName={toName}
+          resultCount={resultCount}
+          firstBusTime={firstBusTime}
+          lastBusTime={lastBusTime}
+          serviceTypes={Object.values(serviceCounts).map((s) => s.display)}
+        />
+
         <BusTripsJsonLd
           fromName={fromName}
           toName={toName}
-          trips={(searchState.data?.results ?? []).map((r) => ({
-            routeNo: r.route_no,
-            serviceType: r.service_type ?? null,
-            boardStop: r.board_stop,
-            alightStop: r.alight_stop,
-            departsAt: r.boards_at ?? r.departs_at ?? null,
-          }))}
+          trips={(searchState.data?.results ?? []).map((r) => {
+            const raw = r.boards_at ?? r.departs_at ?? null;
+            return {
+              routeNo: r.route_no,
+              serviceType: r.service_type ?? null,
+              boardStop: r.board_stop,
+              alightStop: r.alight_stop,
+              departsAt: raw && raw !== '00:00:00' ? raw : null,
+            };
+          })}
         />
 
         <FAQJsonLd

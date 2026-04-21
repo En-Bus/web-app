@@ -195,20 +195,30 @@ export function SearchResults({
                       </span>
                     ) : null}
                   </div>
-                  <div className="mt-2 flex items-baseline gap-2 text-base font-medium text-neutral-800">
-                    {arrivesAt ? (
-                      <>
-                        <span>{getBestDisplayTime(result)}</span>
-                        <span className="text-neutral-400 text-sm font-normal" aria-hidden="true">→</span>
-                        <span>{arrivesAt}</span>
-                        {duration ? (
-                          <span className="text-xs font-normal text-neutral-400">· {duration}</span>
-                        ) : null}
-                      </>
-                    ) : (
-                      <span>{getBestDisplayTime(result)}</span>
-                    )}
-                  </div>
+                  {(() => {
+                    const displayTime = getBestDisplayTime(result);
+                    const hasTime = displayTime !== 'No timing info';
+                    return (
+                      <div className="mt-2 flex items-baseline gap-2 text-base font-medium text-neutral-800">
+                        {hasTime ? (
+                          arrivesAt ? (
+                            <>
+                              <span>{displayTime}</span>
+                              <span className="text-neutral-400 text-sm font-normal" aria-hidden="true">→</span>
+                              <span>{arrivesAt}</span>
+                              {duration ? (
+                                <span className="text-xs font-normal text-neutral-400">· {duration}</span>
+                              ) : null}
+                            </>
+                          ) : (
+                            <span>{displayTime}</span>
+                          )
+                        ) : (
+                          <span className="text-sm font-normal text-neutral-400">Time not in schedule</span>
+                        )}
+                      </div>
+                    );
+                  })()}
                   <div className="mt-1.5 flex items-center justify-between gap-2">
                     <span className="text-sm leading-6 text-neutral-600">
                       {formatStopName(result.board_stop)}

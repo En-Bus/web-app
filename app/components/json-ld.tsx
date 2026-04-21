@@ -128,6 +128,51 @@ export function BusTripsJsonLd({
   );
 }
 
+export function BusRouteJsonLd({
+  fromName,
+  toName,
+  resultCount,
+  firstBusTime,
+  lastBusTime,
+  serviceTypes,
+}: {
+  fromName: string;
+  toName: string;
+  resultCount: number;
+  firstBusTime: string | null;
+  lastBusTime: string | null;
+  serviceTypes: string[];
+}) {
+  return (
+    <JsonLd
+      data={{
+        '@context': 'https://schema.org',
+        '@type': 'BusRoute',
+        name: `${fromName} to ${toName} Bus`,
+        alternateName: `${fromName} ${toName} bus timings`,
+        description: `${resultCount} TNSTC and SETC government buses from ${fromName} to ${toName}. ${serviceTypes.length ? `Service types: ${serviceTypes.join(', ')}.` : ''}`,
+        provider: {
+          '@type': 'Organization',
+          name: 'Tamil Nadu State Transport Corporation (TNSTC)',
+          url: 'https://www.tnstc.in',
+        },
+        departureBusStop: {
+          '@type': 'BusStop',
+          name: fromName,
+          address: { '@type': 'PostalAddress', addressRegion: 'Tamil Nadu', addressCountry: 'IN' },
+        },
+        arrivalBusStop: {
+          '@type': 'BusStop',
+          name: toName,
+          address: { '@type': 'PostalAddress', addressRegion: 'Tamil Nadu', addressCountry: 'IN' },
+        },
+        ...(firstBusTime ? { departureTime: firstBusTime } : {}),
+        ...(lastBusTime ? { arrivalTime: lastBusTime } : {}),
+      }}
+    />
+  );
+}
+
 export function FAQJsonLd({
   questions,
 }: {
