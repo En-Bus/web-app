@@ -11,6 +11,7 @@ import {
   calculateFareRange,
   fetchSearchResults,
   fetchTripStops,
+  formatStopName,
   parseBusRouteSlug,
   to12h,
   toDisplayName,
@@ -270,7 +271,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           </a>
         </div>
 
-        {tripStops.length > 0 && (
+        {tripStops.length > 2 && (
           <section className="space-y-3">
             <h2 className="text-xl font-semibold tracking-tight">
               Stops on this route
@@ -279,15 +280,21 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
               Intermediate stops for route {representativeTrip?.route_no} — other buses may have different stops.
             </p>
             <ol className="relative border-l border-neutral-200 pl-5 space-y-2">
-              {tripStops.map((stop, i) => (
-                <li key={i} className="relative">
-                  <span className="absolute -left-[1.15rem] top-[0.35rem] h-2 w-2 rounded-full border border-neutral-300 bg-white" />
-                  <span className="text-sm text-neutral-800">{stop.stop_name}</span>
-                  {stop.departure_time ? (
-                    <span className="ml-2 text-xs text-neutral-500">{stop.departure_time.slice(0, 5)}</span>
-                  ) : null}
-                </li>
-              ))}
+              {tripStops.map((stop, i) => {
+                const displayName = formatStopName(stop.stop_name.replace(/-/g, ' '));
+                const depTime = stop.departure_time && stop.departure_time !== '00:00:00'
+                  ? to12h(stop.departure_time)
+                  : null;
+                return (
+                  <li key={i} className="relative">
+                    <span className="absolute -left-[1.15rem] top-[0.35rem] h-2 w-2 rounded-full border border-neutral-300 bg-white" />
+                    <span className="text-sm text-neutral-800">{displayName}</span>
+                    {depTime ? (
+                      <span className="ml-2 text-xs text-neutral-500">{depTime}</span>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ol>
           </section>
         )}
@@ -299,12 +306,12 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           <div className="space-y-2 text-sm leading-6 text-neutral-700">
             <p>
               {resultCount} TNSTC and SETC buses operate between {fromName} and {toName}.
-              enbus.in matches intermediate stops too, so you can find buses even if
-              {fromName} or {toName} is a mid-route stop.
+              {' '}enbus.in matches intermediate stops too — find buses even if {fromName} or {toName} is a mid-route stop.
             </p>
             <p>
-              Bus types include {serviceBreakdownLabel.toLowerCase()}, with first departures around {firstBusLabel}
-              and last buses near {lastBusLabel}.
+              Bus types: {serviceBreakdownLabel.toLowerCase()}.
+              {firstBusLabel !== 'Not available' ? ` First bus around ${firstBusLabel}` : null}
+              {lastBusLabel !== 'Not available' ? `, last bus near ${lastBusLabel}.` : null}
             </p>
             {formattedDistance ? (
               <p>
