@@ -214,7 +214,7 @@ export function SearchResults({
                             <span>{displayTime}</span>
                           )
                         ) : (
-                          <span className="text-sm font-normal text-neutral-400">Time not in schedule</span>
+                          <span className="text-sm font-normal text-neutral-400">Time information not available</span>
                         )}
                       </div>
                     );
