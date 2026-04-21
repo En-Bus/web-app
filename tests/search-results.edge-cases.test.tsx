@@ -77,14 +77,14 @@ describe('SearchResults component', () => {
     expect(busCard?.textContent).toContain('Madurai');
   });
 
-  it('shows "Time unknown" for results with no time', () => {
+  it('shows "No timing info" for results with no time', () => {
     const noTimeResult: SearchResult = {
       ...baseResult,
       boards_at: null,
       departs_at: null,
     };
     render(<SearchResults fromSlug="a" toSlug="b" results={[noTimeResult]} />);
-    expect(screen.getByText('Time unknown')).toBeInTheDocument();
+    expect(screen.getByText('No timing info')).toBeInTheDocument();
   });
 
   it('shows distance when available', () => {

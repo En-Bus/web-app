@@ -188,7 +188,7 @@ export function to12h(time: string | null | undefined): string {
 
 export function getBestDisplayTime(result: SearchResult): string {
   const raw = result.boards_at ?? result.departs_at;
-  return to12h(raw) || 'Time unknown';
+  return to12h(raw) || 'No timing info';
 }
 
 export function buildBusRouteSlug(fromSlug: string, toSlug: string): string {

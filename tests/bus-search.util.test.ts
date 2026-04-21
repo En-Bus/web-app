@@ -37,7 +37,7 @@ describe('bus-search utils', () => {
         alight_stop: 'B',
         boards_at: '10:00',
       }),
-    ).toBe('10:00');
+    ).toBe('10:00 AM');
 
     expect(
       getBestDisplayTime({
@@ -47,7 +47,7 @@ describe('bus-search utils', () => {
         boards_at: null,
         departs_at: '10:05',
       }),
-    ).toBe('10:05');
+    ).toBe('10:05 AM');
 
     expect(
       getBestDisplayTime({
@@ -57,6 +57,6 @@ describe('bus-search utils', () => {
         boards_at: null,
         departs_at: null,
       }),
-    ).toBe('Time unknown');
+    ).toBe('No timing info');
   });
 });

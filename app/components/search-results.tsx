@@ -21,8 +21,9 @@ type SearchResultsProps = {
 };
 
 function getTimeBand(time: string): string {
+  if (!time || time === '00:00:00') return '';
   const h = parseInt(time.slice(0, 2), 10);
-  if (isNaN(h)) return '';
+  if (isNaN(h) || h === 0) return '';
   if (h < 6) return 'Night';
   if (h < 10) return 'Early Morning';
   if (h < 17) return 'Day';
