@@ -161,7 +161,32 @@ export function slugToQuery(value: string): string {
   return value.replace(/-+/g, ' ').trim();
 }
 
+const MTC_DISPLAY_NAMES: Record<string, string> = {
+  'mgr-koyambedu': 'Koyambedu (MGR Terminal)',
+  'm-g-r-koyambedu': 'Koyambedu (MGR Terminal)',
+  'koyambedu': 'Koyambedu',
+  'cmbt': 'CMBT Koyambedu',
+  'kcbt-kilambakkam': 'Kilambakkam Bus Terminus',
+  'kilambakkam': 'Kilambakkam',
+  'avadi': 'Avadi',
+  'avadi-bs': 'Avadi Bus Stand',
+  'tambaram': 'Tambaram',
+  'perambur': 'Perambur',
+  'royapuram': 'Royapuram',
+  'broadway': 'Broadway (Chennai)',
+  'parrys': 'Parry\'s Corner',
+  'guindy': 'Guindy',
+  'vadapalani': 'Vadapalani',
+  'adyar': 'Adyar',
+  'velachery': 'Velachery',
+  'porur': 'Porur',
+  'poonamallee': 'Poonamallee',
+  'ambattur': 'Ambattur',
+};
+
 export function toDisplayName(value: string): string {
+  const override = MTC_DISPLAY_NAMES[value.toLowerCase()];
+  if (override) return override;
   return slugToQuery(value)
     .split(' ')
     .filter(Boolean)

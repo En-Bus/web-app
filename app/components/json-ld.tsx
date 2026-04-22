@@ -135,6 +135,9 @@ export function BusRouteJsonLd({
   firstBusTime,
   lastBusTime,
   serviceTypes,
+  providerName = 'Tamil Nadu State Transport Corporation (TNSTC)',
+  providerUrl = 'https://www.tnstc.in',
+  descriptionPrefix = 'TNSTC and SETC government buses',
 }: {
   fromName: string;
   toName: string;
@@ -142,6 +145,9 @@ export function BusRouteJsonLd({
   firstBusTime: string | null;
   lastBusTime: string | null;
   serviceTypes: string[];
+  providerName?: string;
+  providerUrl?: string;
+  descriptionPrefix?: string;
 }) {
   return (
     <JsonLd
@@ -150,11 +156,11 @@ export function BusRouteJsonLd({
         '@type': 'BusRoute',
         name: `${fromName} to ${toName} Bus`,
         alternateName: `${fromName} ${toName} bus timings`,
-        description: `${resultCount} TNSTC and SETC government buses from ${fromName} to ${toName}. ${serviceTypes.length ? `Service types: ${serviceTypes.join(', ')}.` : ''}`,
+        description: `${resultCount} ${descriptionPrefix} from ${fromName} to ${toName}. ${serviceTypes.length ? `Service types: ${serviceTypes.join(', ')}.` : ''}`,
         provider: {
           '@type': 'Organization',
-          name: 'Tamil Nadu State Transport Corporation (TNSTC)',
-          url: 'https://www.tnstc.in',
+          name: providerName,
+          url: providerUrl,
         },
         departureBusStop: {
           '@type': 'BusStop',

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { SearchForm } from '../../components/search-form';
 import { Breadcrumb } from '../../components/breadcrumb';
 import { toDisplayName } from '../../lib/bus-search';
+import { BreadcrumbJsonLd } from '../../components/json-ld';
 import { getHubCities, getRoutesFromCity } from '../../lib/seo-routes';
 
 export function generateStaticParams() {
@@ -55,6 +56,7 @@ export default async function BusesFromPage({ params }: BusesFromPageProps) {
 
   return (
     <>
+      <BreadcrumbJsonLd items={breadcrumbItems} />
       <Breadcrumb items={breadcrumbItems} />
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="space-y-8">

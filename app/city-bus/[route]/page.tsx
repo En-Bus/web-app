@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 
 import { SearchForm } from '../../components/search-form';
 import { Breadcrumb } from '../../components/breadcrumb';
-import { FAQJsonLd } from '../../components/json-ld';
+import { BreadcrumbJsonLd, BusRouteJsonLd, BusTripsJsonLd, FAQJsonLd } from '../../components/json-ld';
 import {
   buildBusRouteSlug,
   calculateDuration,
@@ -15,6 +15,9 @@ import {
 } from '../../lib/bus-search';
 import { SearchResults } from '../../components/search-results';
 import { CITY_BUS_ROUTE_SLUGS } from '../../lib/seo-routes';
+
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 export function generateStaticParams() {
   return CITY_BUS_ROUTE_SLUGS.map((route) => ({ route }));
@@ -136,7 +139,7 @@ export default async function CityBusRoutePage({
     .filter((d): d is string => d !== null);
   const medianDuration = durations.length > 0 ? (durations[Math.floor(durations.length / 2)] ?? null) : null;
 
-  if (!searchState.error && !hasResults) {
+  if (!searchState.error && results.length < 5) {
     notFound();
   }
 
@@ -248,6 +251,35 @@ export default async function CityBusRoutePage({
             ) : null}
           </div>
         </section>
+
+        <BusRouteJsonLd
+          fromName={fromName}
+          toName={toName}
+          resultCount={resultCount}
+          firstBusTime={firstBusTime}
+          lastBusTime={lastBusTime}
+          serviceTypes={Object.values(serviceCounts).map((s) => s.display)}
+          providerName="Metropolitan Transport Corporation (MTC)"
+          providerUrl="https://mtcbus.tn.gov.in"
+          descriptionPrefix="MTC city buses"
+        />
+
+        <BusTripsJsonLd
+          fromName={fromName}
+          toName={toName}
+          trips={results.map((r) => {
+            const raw = r.boards_at ?? r.departs_at ?? null;
+            return {
+              routeNo: r.route_no,
+              serviceType: r.service_type ?? null,
+              boardStop: r.board_stop,
+              alightStop: r.alight_stop,
+              departsAt: raw && raw !== '00:00:00' ? raw : null,
+            };
+          })}
+        />
+
+        <BreadcrumbJsonLd items={breadcrumbItems} />
 
         <FAQJsonLd
           questions={[

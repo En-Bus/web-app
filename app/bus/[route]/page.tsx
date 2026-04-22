@@ -19,6 +19,9 @@ import {
 import { SearchResults } from '../../components/search-results';
 import { SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
+export const dynamicParams = true;
+export const revalidate = 86400;
+
 export function generateStaticParams() {
   return SEO_ROUTE_SLUGS.map((route) => ({ route }));
 }
@@ -155,7 +158,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     return s.includes('ac') || s.includes('volvo') || s.includes('sleeper');
   }).length;
 
-  if (!searchState.error && !hasResults) {
+  if (!searchState.error && results.length < 3) {
     notFound();
   }
 
