@@ -10,37 +10,44 @@ Rule of thumb: wait until indexed/discovered ratio > 50% before the next batch.
 
 ---
 
-## Phase 3 launch date: ___________ (fill in when deployed)
+## Phase 3 launch date: 2026-04-22
 
 ---
 
 ## Schedule
 
-### Week 0 — Phase 3 launch (LIMIT: 2000)
-- [ ] DB-driven sitemap goes live (`/sitemap-routes` endpoint, LIMIT 2000)
-- [ ] Priority tier: `seo-routes.ts` slugs (daily frequency, priority 0.8)
-- [ ] Secondary tier: DB routes (weekly frequency, priority 0.6)
+### 2026-04-22 — Week 0: Phase 3 live (LIMIT: 2000) ✅
+- [x] DB-driven sitemap deployed (`/sitemap-routes` endpoint, LIMIT 2000)
+- [x] Priority tier: `seo-routes.ts` slugs (daily frequency, priority 0.8)
+- [x] Secondary tier: DB routes (weekly frequency, priority 0.6)
 - [ ] Submit updated sitemap to Google Search Console
-- Target: impressions should start rising within 2–3 weeks
+- Sitemap will expand from 572 → ~2,500 URLs on next daily revalidation
+- Target: impressions should start rising by 2026-05-13
 
-### Week 3 — Check GSC Coverage report
+### 2026-05-13 — Week 3: Check GSC Coverage report
 - [ ] Open Search Console → Coverage → "Discovered - currently not indexed"
 - [ ] If indexed / (indexed + discovered-not-indexed) > 50% → proceed to LIMIT 3000
-- [ ] If ratio < 30% → hold at LIMIT 2000 for 2 more weeks
+- [ ] If ratio < 30% → hold at LIMIT 2000, recheck on 2026-05-27
 
-### Week 4–6 — Raise LIMIT to 3000
+### 2026-05-27 — Week 5: Raise LIMIT to 3000 (if GSC ratio > 50%)
 - [ ] Edit `backend/supabase/functions/api/index.ts` → `/sitemap-routes` → change `LIMIT 2000` to `LIMIT 3000`
 - [ ] `npx supabase functions deploy api --project-ref hopivdsbzzfklohyllut`
 - [ ] Resubmit sitemap in GSC (Sitemaps tab → Resubmit)
 
-### Week 8 — Raise LIMIT to 5000 (if GSC healthy)
-- [ ] Same process — check ratio first, then raise
+### 2026-06-17 — Week 8: Raise LIMIT to 5000 (if GSC still healthy)
+- [ ] Check GSC ratio again before raising
 - [ ] Goal: cover all inter-city pairs with ≥3 trips
+- [ ] Change LIMIT to 5000, deploy, resubmit
 
-### Week 12+ — City-bus expansion
-- [ ] Lower city-bus threshold in `/sitemap-routes` from ≥5 to ≥3 trips
-- [ ] Only after inter-city rollout is stable
-- [ ] MTC routes are more numerous and potentially thinner — monitor closely
+### 2026-07-15 — Week 12: City-bus threshold expansion
+- [ ] Lower city-bus threshold in `/sitemap-routes` SQL from `>= 3` for inter-city and `>= 5` for city to `>= 3` for both
+- [ ] Only proceed if inter-city rollout is stable (position not dropping, crawl ratio healthy)
+- [ ] MTC routes are more numerous and potentially thinner — monitor weekly after this
+
+### 2026-10-01 — Quarter 3: Via-stop and hub city audit
+- [ ] Run via-stop candidate query (see below) — add stops crossing ≥20 appearances
+- [ ] Run hub city query (see below) — add cities with ≥10 destinations
+- [ ] Update `VIA_STOP_SLUGS` and hub logic in `web-app/app/lib/seo-routes.ts`
 
 ---
 
