@@ -20,12 +20,12 @@ export async function generateMetadata({ params }: ViaStopPageProps): Promise<Me
   const stopName = toDisplayName(stop);
   const year = new Date().getFullYear();
   return {
-    title: `Buses passing through ${stopName} — Tamil Nadu Bus Routes (${year})`,
-    description: `Find all TNSTC and SETC buses that pass through ${stopName} with departure times, origin, and destination. Updated ${year}.`,
+    title: `${stopName} Bus Stand Timetable — Buses via ${stopName} (${year})`,
+    description: `See all TNSTC & SETC buses stopping at ${stopName} bus stand — route numbers, timings & full origin–destination. Board at ${stopName} mid-route. Updated ${year}.`,
     alternates: { canonical: `/via/${stop}` },
     openGraph: {
-      title: `Buses via ${stopName} — TNSTC & SETC Routes`,
-      description: `All Tamil Nadu government buses passing through ${stopName} with timings.`,
+      title: `${stopName} Bus Stand Timetable | TNSTC & SETC`,
+      description: `All government buses stopping at ${stopName} with timings and full route details.`,
     },
   };
 }
