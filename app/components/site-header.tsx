@@ -9,8 +9,8 @@ export function SiteHeader() {
           <Image
             src="/logo.png"
             alt="enbus TN Bus Finder"
-            width={48}
-            height={48}
+            width={150}
+            height={80}
             priority
           />
         </Link>
