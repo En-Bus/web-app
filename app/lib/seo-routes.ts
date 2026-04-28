@@ -463,6 +463,63 @@ export const SEO_ROUTE_SLUGS = [
   'sivaganga-to-madurai',
   'sivaganga-to-tirunelveli',
   'sivaganga-to-karaikudi',
+  // Rajapalayam — major southern hub, high GSC click signal
+  'rajapalayam-to-sankarankovil',
+  'rajapalayam-to-kovilpatti',
+  'rajapalayam-to-tenkasi',
+  'rajapalayam-to-virudhunagar',
+  'rajapalayam-to-aruppukkottai',
+  'rajapalayam-to-tiruppur',
+  'rajapalayam-to-papanasam',
+  'rajapalayam-to-chennai',
+  'rajapalayam-to-palani',
+  'rajapalayam-to-coimbatore',
+  // Virudhunagar — expanded beyond existing 5 slugs
+  'virudhunagar-to-aruppukkottai',
+  'virudhunagar-to-tirumangalam',
+  'virudhunagar-to-rajapalayam',
+  'virudhunagar-to-sivakasi',
+  // Kanchipuram — district capital, north TN
+  'kanchipuram-to-vellore',
+  'kanchipuram-to-tiruvannamalai',
+  'kanchipuram-to-bangalore',
+  'kanchipuram-to-tindivanam',
+  'kanchipuram-to-viluppuram',
+  // Gobichettipalayam — Erode district hub
+  'gobichettipalayam-to-coimbatore',
+  'gobichettipalayam-to-tiruppur',
+  'gobichettipalayam-to-mettupalayam',
+  // Batlagundu — Dindigul district junction
+  'batlagundu-to-tiruppur',
+  'batlagundu-to-kodaikanal',
+  'batlagundu-to-palani',
+  'batlagundu-to-coimbatore',
+  // Chidambaram — Cuddalore district
+  'chidambaram-to-chennai',
+  // Cumbum — Theni district
+  'cumbum-to-tiruppur',
+  'cumbum-to-coimbatore',
+  // Edappadi — Salem district
+  'edappadi-to-kumarapalayam',
+  'edappadi-to-bhavani',
+  // Thanjavur — expanded delta region routes
+  'thanjavur-to-pattukkottai',
+  'thanjavur-to-pudukkottai',
+  'thanjavur-to-ariyalur',
+  'thanjavur-to-mannargudi',
+  'thanjavur-to-velankanni',
+  'thanjavur-to-tiruvarur',
+  'thanjavur-to-papanasam',
+  // Tirunelveli — expanded southern routes
+  'tirunelveli-to-sathankulam',
+  'tirunelveli-to-aruppukkottai',
+  'tirunelveli-to-vilathikulam',
+  // Dindigul — expanded beyond existing slugs
+  'dindigul-to-pudukkottai',
+  'dindigul-to-ponnamaravathi',
+  'dindigul-to-cumbum',
+  'dindigul-to-sivagangai',
+  'dindigul-to-kumily',
 ] as const;
 
 // Unique origin cities extracted from inter-city + city bus slugs.
@@ -590,4 +647,22 @@ export const VIA_STOP_SLUGS = [
   'natham',
   'dharapuram',
   'sathyamangalam',
+  // Added Apr 28 — already indexed via dynamic fallback, now in sitemap
+  'batlagundu',
+  'chidambaram',
+  // New stops from tickettogetlost data — all validated against production API
+  'oddanchatram',
+  'viluppuram',
+  'kanchipuram',
+  'chengalpattu',
+  'sankarankovil',
+  'edappadi',
+  'thiruppattur',
+  'cumbum',
+  'panruti',
+  'gobichettipalayam',
+  'sholingur',
+  'vellakovil',
+  'vaniyambadi',
+  'kalaiyar-kovil',
 ] as const;

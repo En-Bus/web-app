@@ -44,8 +44,13 @@ Rule of thumb: wait until indexed/discovered ratio > 50% before the next batch.
 - [ ] Only proceed if inter-city rollout is stable (position not dropping, crawl ratio healthy)
 - [ ] MTC routes are more numerous and potentially thinner — monitor weekly after this
 
-### 2026-10-01 — Quarter 3: Via-stop and hub city audit
-- [ ] Run via-stop candidate query (see below) — add stops crossing ≥20 appearances
+### 2026-04-28 — Via-stop expansion (pulled forward from Oct) ✅
+- [x] Added 16 new via-stop pages from tickettogetlost data (22 → 38 stops)
+- [x] Added 46 new SEO route slugs from TTL/tndata (new origins: rajapalayam, virudhunagar, kanchipuram, gobichettipalayam, batlagundu, chidambaram, cumbum, edappadi + expanded thanjavur/tirunelveli/dindigul)
+- [x] Added /bus/[route] → /via/[stop] internal links (stops-on-route section now links to via pages)
+
+### 2026-10-01 — Quarter 3: Next via-stop and hub city audit
+- [ ] Run via-stop candidate query (see below) — add new stops crossing ≥20 appearances
 - [ ] Run hub city query (see below) — add cities with ≥10 destinations
 - [ ] Update `VIA_STOP_SLUGS` and hub logic in `web-app/app/lib/seo-routes.ts`
 

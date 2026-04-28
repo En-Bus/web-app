@@ -12,12 +12,13 @@ import {
   fetchSearchResults,
   fetchTripStops,
   formatStopName,
+  normalizeSlug,
   parseBusRouteSlug,
   to12h,
   toDisplayName,
 } from '../../lib/bus-search';
 import { SearchResults } from '../../components/search-results';
-import { SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
+import { SEO_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;
 export const revalidate = 86400;
@@ -31,6 +32,10 @@ type BusRoutePageProps = {
     route: string;
   }>;
 };
+
+function hasViaSlug(stopName: string): boolean {
+  return (VIA_STOP_SLUGS as readonly string[]).includes(normalizeSlug(stopName.replace(/-/g, ' ')));
+}
 
 const POPULAR_DESTINATIONS = [
   { slug: 'chennai', name: 'Chennai' },
@@ -288,10 +293,21 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
                 const depTime = stop.departure_time && stop.departure_time !== '00:00:00'
                   ? to12h(stop.departure_time)
                   : null;
+                const viaSlug = normalizeSlug(stop.stop_name.replace(/-/g, ' '));
+                const isViaPage = hasViaSlug(stop.stop_name);
                 return (
                   <li key={i} className="relative">
                     <span className="absolute -left-[1.15rem] top-[0.35rem] h-2 w-2 rounded-full border border-neutral-300 bg-white" />
-                    <span className="text-sm text-neutral-800">{displayName}</span>
+                    {isViaPage ? (
+                      <Link
+                        href={`/via/${viaSlug}`}
+                        className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
+                      >
+                        {displayName}
+                      </Link>
+                    ) : (
+                      <span className="text-sm text-neutral-800">{displayName}</span>
+                    )}
                     {depTime ? (
                       <span className="ml-2 text-xs text-neutral-500">{depTime}</span>
                     ) : null}
