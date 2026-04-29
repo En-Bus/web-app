@@ -20,8 +20,8 @@ const API_BASE =
   process.env.NEXT_PUBLIC_SEARCH_API_BASE_URL ??
   'https://hopivdsbzzfklohyllut.supabase.co/functions/v1/api';
 
-const CONCURRENCY = 8;
-const DELAY_MS = 50; // be polite to the API
+const CONCURRENCY = 3;
+const DELAY_MS = 300; // Supabase Edge Functions throttle under high concurrency
 
 function slugToQuery(slug: string): string {
   return slug.replace(/-+/g, ' ').trim();
@@ -41,16 +41,22 @@ async function checkSlug(slug: string, type: 'inter-city' | 'city'): Promise<boo
   if (!parsed) return false;
 
   const params = new URLSearchParams({ from: parsed.from, to: parsed.to, type });
-  try {
-    const res = await fetch(`${API_BASE}/search?${params}`, {
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!res.ok) return false;
-    const data = (await res.json()) as { count?: number; results?: unknown[] };
-    return (data.count ?? data.results?.length ?? 0) >= 3;
-  } catch {
-    return false;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${API_BASE}/search?${params}`, {
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!res.ok) {
+        if (attempt === 0) await new Promise((r) => setTimeout(r, 2_000));
+        continue;
+      }
+      const data = (await res.json()) as { count?: number; results?: unknown[] };
+      return (data.count ?? data.results?.length ?? 0) >= 3;
+    } catch {
+      if (attempt === 0) await new Promise((r) => setTimeout(r, 2_000));
+    }
   }
+  return false;
 }
 
 async function runWithConcurrency<T>(
