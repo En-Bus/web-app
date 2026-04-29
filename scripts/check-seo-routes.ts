@@ -3,9 +3,9 @@
  * check-seo-routes.ts
  *
  * Validates every slug in SEO_ROUTE_SLUGS and CITY_BUS_ROUTE_SLUGS
- * returns at least one result from the search API.
+ * returns at least 3 results from the search API (matches the page's notFound threshold).
  *
- * Exit 1 if any zero-result (would 404 on production) routes are found.
+ * Exit 1 if any routes return fewer than 3 results (would 404 on production).
  *
  * Run:  npx tsx scripts/check-seo-routes.ts
  * Hook: installed as a pre-push git hook to prevent broken routes shipping
@@ -47,7 +47,7 @@ async function checkSlug(slug: string, type: 'inter-city' | 'city'): Promise<boo
     });
     if (!res.ok) return false;
     const data = (await res.json()) as { count?: number; results?: unknown[] };
-    return (data.count ?? data.results?.length ?? 0) > 0;
+    return (data.count ?? data.results?.length ?? 0) >= 3;
   } catch {
     return false;
   }
@@ -125,7 +125,7 @@ async function main() {
   console.log(`\n\nChecked ${checked}/${total} routes.`);
 
   if (broken.length > 0) {
-    console.error(`\n❌ ${broken.length} route(s) return zero results and will 404 in production:`);
+    console.error(`\n❌ ${broken.length} route(s) return fewer than 3 results and will 404 in production:`);
     for (const route of broken) {
       console.error(`   ${route}`);
     }
