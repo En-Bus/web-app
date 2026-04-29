@@ -355,6 +355,146 @@ export const SEO_ROUTE_SLUGS = [
   'dindigul-to-cumbum',
   'dindigul-to-sivagangai',
   'dindigul-to-kumily',
+  // Organic-traffic routes discovered via GSC/GA — verified ≥3 results Apr 2026
+  // Chennai origins (extended)
+  'chennai-to-thoothukudi',
+  'chennai-to-ariyalur',
+  'chennai-to-bengaluru',
+  'chennai-to-tiruvarur',
+  'chennai-to-guruvayur',
+  'chennai-tambaram-to-vellore',
+  // Namakkal / Karur
+  'namakkal-to-chennai',
+  'karur-to-coimbatore',
+  // Vellore extended
+  'vellore-to-bangalore',
+  'vellore-to-kalpakkam',
+  'vellore-to-tiruthani',
+  // Tambaram
+  'tambaram-to-kanchipuram',
+  'tambaram-to-vellore',
+  // Kalpakkam
+  'kalpakkam-to-chengalpattu',
+  'kalpakkam-to-tambaram',
+  'kalpakkam-to-vellore',
+  // Kanchipuram extended
+  'kanchipuram-to-tambaram',
+  'kanchipuram-to-cheyyar',
+  'kanchipuram-to-arcot',
+  // Tiruthani / Tiruvallur area
+  'tiruthani-to-tiruvallur',
+  'tiruthani-to-vellore',
+  'uthukottai-to-tiruvallur',
+  'arakkonam-to-kanchipuram',
+  'arakkonam-to-sholingur',
+  'arakkonam-to-vellore',
+  'arakkonam-to-chengalpattu',
+  'arakkonam-to-tirupathi',
+  'arakkonam-to-tiruthani',
+  // Arani / North TN
+  'arani-to-chennai',
+  'arani-to-arcot',
+  // Tiruvannamalai extended
+  'tiruvannamalai-to-chennai-madhavaram',
+  // Salem extended
+  'salem-to-yercaud',
+  'salem-to-cudalore',
+  'salem-to-bomdidi',
+  'yercaud-to-salem',
+  // Erode extended
+  'erode-to-anthiyur',
+  'erode-to-mettupalayam',
+  'erode-to-gobichettipalayam',
+  'erode-to-dharapuram',
+  'erode-to-omalur',
+  'erode-to-vellakovil',
+  'anthiyur-to-mettur',
+  // Tiruchengode area
+  'tiruchengode-to-sankagiri',
+  'tiruchengode-to-edappadi',
+  'tiruchengode-to-attur-salem',
+  'attur-salem-to-thammampatti',
+  'attur-salem-to-rasipuram',
+  'rasipuram-to-elampillai',
+  'rasipuram-to-thammampatti',
+  // Aravakurichi / Karur area
+  'aravakurichi-to-erode',
+  // Coimbatore area
+  'singanallur-to-madurai',
+  'gandhipuram-to-tirupathi',
+  'valparai-to-pollachi',
+  // Arapalayam area (alternate spelling of Arappalayam area)
+  'arapalayam-to-coimbatore',
+  'arapalayam-to-salem',
+  'arapalayam-to-erode',
+  // Madurai extended
+  'madurai-arappalayam-to-erode',
+  'madurai-mattuthavani-to-thondi',
+  'palladam-to-madurai',
+  'bodi-to-madurai',
+  // Palani / Kodaikanal
+  'palani-to-kodaikanal',
+  'kodaikanal-to-palani',
+  'pallapatti-to-palani',
+  'pudukkottai-to-palani',
+  // Virudhunagar extended
+  'virudhunagar-to-t-kallupatti',
+  'virudhunagar-to-kariapatti',
+  // Rajapalayam extended
+  'rajapalayam-to-kumily',
+  // Tirunelveli extended
+  'tirunelveli-to-chennai-avadi',
+  'tenkasi-to-tirunelveli',
+  // Sivaganga / Aranthangi area
+  'sivagangai-to-manamadurai',
+  'aranthangi-to-pudukkottai',
+  'aranthangi-to-madurai',
+  'aranthangi-to-peravurani',
+  'aranthangi-to-alangudi',
+  'mimisal-to-pattukkottai',
+  'paramakudi-to-mudukulathur',
+  // Thanjavur / Pattukkottai delta routes
+  'pattukkottai-to-thanjavur',
+  'pattukkottai-to-nagapattinam',
+  'pattukkottai-to-karambakkudi',
+  'pattukkottai-to-peravurani',
+  'pattukkottai-to-pudukkottai',
+  'thanjavur-to-lalgudi',
+  // Tiruvarur / Mannargudi delta
+  'tiruvarur-to-chennai',
+  'tiruvarur-to-kumbakonam',
+  'mannargudi-to-chennai',
+  'mannargudi-to-kumbakonam',
+  'mannargudi-to-tiruvarur',
+  'mannargudi-to-tiruthuraipoondi',
+  'mannargudi-to-vedaranyam',
+  // Nagapattinam / Karaikal
+  'karaikal-to-kumbakonam',
+  'mayiladuthurai-to-poompuhar',
+  'mayiladuthurai-to-manalmedu',
+  // Kumbakonam extended
+  'kumbakonam-to-chennai-madhavaram',
+  'kumbakonam-to-bengaluru',
+  // Neyveli / Cuddalore area
+  'neyveli-to-chennai',
+  // Manapparai area
+  'manapparai-to-kulithalai',
+  'manapparai-to-musiri',
+  // Thuraiyur area
+  'thuraiyur-to-chennai',
+  'thuraiyur-to-erode',
+  'thuraiyur-to-salem',
+  'thuraiyur-to-thammampatti',
+  // Dindigul extended
+  'dindigul-to-sirumalai',
+  // Ponnamaravathi area
+  'ponnamaravathi-to-pudukkottai',
+  // Somanur
+  'somanur-to-palladam',
+  // Mysore connections
+  'mysore-to-erode',
+  // Kallakurichi
+  'kallakurichi-to-bengaluru',
 ] as const;
 
 // Unique origin cities extracted from inter-city + city bus slugs.
