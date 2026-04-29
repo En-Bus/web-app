@@ -260,7 +260,6 @@ export const SEO_ROUTE_SLUGS = [
   'tiruppur-to-salem',
   'tiruppur-to-tirunelveli',
   'tiruppur-to-erode',
-  'tiruppur-to-thanjavur',
   'tiruppur-to-kumbakonam',
   'tiruppur-to-nagercoil',
   'tiruppur-to-karaikudi',
