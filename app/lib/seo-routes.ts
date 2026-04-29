@@ -293,7 +293,6 @@ export const SEO_ROUTE_SLUGS = [
   'rajapalayam-to-kovilpatti',
   'rajapalayam-to-tenkasi',
   'rajapalayam-to-virudhunagar',
-  'rajapalayam-to-aruppukkottai',
   'rajapalayam-to-tiruppur',
   'rajapalayam-to-papanasam',
   'rajapalayam-to-chennai',
@@ -395,8 +394,6 @@ export const SEO_ROUTE_SLUGS = [
   'erode-to-gobichettipalayam',
   'erode-to-dharapuram',
   'erode-to-omalur',
-  'erode-to-vellakovil',
-  'anthiyur-to-mettur',
   // Tiruchengode area
   'tiruchengode-to-sankagiri',
   'tiruchengode-to-edappadi',
@@ -424,7 +421,6 @@ export const SEO_ROUTE_SLUGS = [
   'palani-to-kodaikanal',
   'kodaikanal-to-palani',
   'pallapatti-to-palani',
-  'pudukkottai-to-palani',
   // Virudhunagar extended
   'virudhunagar-to-t-kallupatti',
   'virudhunagar-to-kariapatti',
