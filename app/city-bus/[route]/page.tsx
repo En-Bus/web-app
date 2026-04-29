@@ -19,8 +19,9 @@ import { CITY_BUS_ROUTE_SLUGS } from '../../lib/seo-routes';
 export const dynamicParams = true;
 export const revalidate = 86400;
 
+// ISR on first request — same reason as /bus/[route]
 export function generateStaticParams() {
-  return CITY_BUS_ROUTE_SLUGS.map((route) => ({ route }));
+  return [];
 }
 
 type CityBusRoutePageProps = {
