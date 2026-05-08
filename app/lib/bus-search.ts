@@ -342,7 +342,7 @@ export async function fetchSearchResults(
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}/search?${params.toString()}`, {
-      next: { revalidate: 900 },
+      next: { revalidate: 86400 },
       signal: AbortSignal.timeout(8000),
     });
   } catch {
