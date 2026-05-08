@@ -56,3 +56,17 @@ The `/search` page is noindex'd. SEO value comes from `/bus/[route]` pages (~126
 The search API supports a `type` parameter (`inter-city` or `city`) to filter between TNSTC/SETC and MTC/urban routes.
 
 The README.md in this repo is unrelated (it's a Supabase CLI readme, not project documentation).
+
+## warm-cache policy (Vercel free tier: 200k ISR Writes/month)
+
+**Only run `npm run warm-cache` after a significant data change** — each run costs ~560 ISR Writes. Routine code-only deploys do NOT need warm-cache because ISR generates pages on-demand as users visit. Run it only after:
+- A new scraping/ETL run that changes bus schedule data (run `build:fallback` first)
+- Adding new pages that have no fallback data and need immediate cache seeding
+
+Do NOT run after: code changes (seo-routes.ts edits, UI fixes, bug fixes), or multiple rapid deploys in one session.
+
+## check-seo-routes requirements
+
+The script (`scripts/check-seo-routes.ts`) sends `time=00:00` to match the production page which always fetches with `time='00:00'` (all-day results). Without this, late-night runs return artificially low result counts. Also note:
+- Use canonical city slugs (e.g. `tiruchirappalli-to-erode`, not `trichy-to-erode`) — `next.config.ts` redirects colloquials to canonical forms, and `seo-routes.ts` must use the canonical (post-redirect) slug.
+- Verify any newly failing route with `curl .../search?from=X&to=Y&type=inter-city&time=00:00` before removing it.
