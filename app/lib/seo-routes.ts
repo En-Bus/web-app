@@ -56,7 +56,6 @@ export const SEO_ROUTE_SLUGS = [
   'coimbatore-to-madurai',
   'coimbatore-to-salem',
   'coimbatore-to-tirunelveli',
-  'coimbatore-to-erode',
   'coimbatore-to-bangalore',
   'coimbatore-to-kumbakonam',
   'coimbatore-to-nagercoil',
@@ -133,7 +132,6 @@ export const SEO_ROUTE_SLUGS = [
   'erode-to-namakkal',
   'erode-to-dharmapuri',
   'erode-to-krishnagiri',
-  'erode-to-pollachi',
   'erode-to-palani',
   'erode-to-ooty',
   'erode-to-marthandam',
@@ -301,7 +299,6 @@ export const SEO_ROUTE_SLUGS = [
   // Virudhunagar expanded
   'virudhunagar-to-aruppukkottai',
   'virudhunagar-to-tirumangalam',
-  'virudhunagar-to-rajapalayam',
   'virudhunagar-to-sivakasi',
   // Kanchipuram
   'kanchipuram-to-vellore',
@@ -312,7 +309,6 @@ export const SEO_ROUTE_SLUGS = [
   // Gobichettipalayam
   'gobichettipalayam-to-coimbatore',
   'gobichettipalayam-to-tiruppur',
-  'gobichettipalayam-to-mettupalayam',
   // Batlagundu
   'batlagundu-to-tiruppur',
   'batlagundu-to-kodaikanal',
@@ -335,7 +331,6 @@ export const SEO_ROUTE_SLUGS = [
   'thanjavur-to-papanasam',
   // Tirunelveli southern routes
   'tirunelveli-to-sathankulam',
-  'tirunelveli-to-aruppukkottai',
   'tirunelveli-to-vilathikulam',
   // Dindigul expanded
   'dindigul-to-pudukkottai',
@@ -350,7 +345,6 @@ export const SEO_ROUTE_SLUGS = [
   'chennai-to-bengaluru',
   'chennai-to-tiruvarur',
   'chennai-to-guruvayur',
-  'chennai-tambaram-to-vellore',
   // Namakkal / Karur
   'namakkal-to-chennai',
   'karur-to-coimbatore',
@@ -364,7 +358,6 @@ export const SEO_ROUTE_SLUGS = [
   // Kalpakkam
   'kalpakkam-to-chengalpattu',
   'kalpakkam-to-tambaram',
-  'kalpakkam-to-vellore',
   // Kanchipuram extended
   'kanchipuram-to-tambaram',
   'kanchipuram-to-cheyyar',
@@ -401,7 +394,6 @@ export const SEO_ROUTE_SLUGS = [
   'attur-salem-to-thammampatti',
   'attur-salem-to-rasipuram',
   'rasipuram-to-elampillai',
-  'rasipuram-to-thammampatti',
   // Aravakurichi / Karur area
   'aravakurichi-to-erode',
   // Coimbatore area
@@ -414,7 +406,6 @@ export const SEO_ROUTE_SLUGS = [
   'arapalayam-to-erode',
   // Madurai extended
   'madurai-arappalayam-to-erode',
-  'madurai-mattuthavani-to-thondi',
   'palladam-to-madurai',
   'bodi-to-madurai',
   // Palani / Kodaikanal
@@ -432,7 +423,6 @@ export const SEO_ROUTE_SLUGS = [
   // Sivaganga / Aranthangi area
   'sivagangai-to-manamadurai',
   'aranthangi-to-pudukkottai',
-  'aranthangi-to-madurai',
   'aranthangi-to-peravurani',
   'aranthangi-to-alangudi',
   'mimisal-to-pattukkottai',
@@ -468,11 +458,9 @@ export const SEO_ROUTE_SLUGS = [
   'thuraiyur-to-chennai',
   'thuraiyur-to-erode',
   'thuraiyur-to-salem',
-  'thuraiyur-to-thammampatti',
   // Dindigul extended
   'dindigul-to-sirumalai',
   // Ponnamaravathi area
-  'ponnamaravathi-to-pudukkottai',
   // Somanur
   'somanur-to-palladam',
   // Mysore connections
