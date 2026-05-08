@@ -40,7 +40,7 @@ async function checkSlug(slug: string, type: 'inter-city' | 'city'): Promise<boo
   const parsed = parseBusRouteSlug(slug);
   if (!parsed) return false;
 
-  const params = new URLSearchParams({ from: parsed.from, to: parsed.to, type });
+  const params = new URLSearchParams({ from: parsed.from, to: parsed.to, type, time: '00:00' });
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const res = await fetch(`${API_BASE}/search?${params}`, {
