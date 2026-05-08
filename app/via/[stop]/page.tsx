@@ -7,8 +7,12 @@ import { FAQJsonLd } from '../../components/json-ld';
 import { fetchViaStops, to12h, toDisplayName, normalizeSlug } from '../../lib/bus-search';
 import { VIA_STOP_SLUGS, SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
+export const dynamicParams = true;
+export const revalidate = 86400;
+
+// ISR on first request — pre-building all via pages at deploy time causes API timeouts.
 export function generateStaticParams() {
-  return VIA_STOP_SLUGS.map((stop) => ({ stop }));
+  return [];
 }
 
 type ViaStopPageProps = {
@@ -181,6 +185,36 @@ export default async function ViaStopPage({ params }: ViaStopPageProps) {
               },
             ]}
           />
+
+          {(() => {
+            const relatedRoutes = [...new Set(
+              results.map((r) => buildRouteSlug(r.origin, r.destination)).filter(hasRouteSlug),
+            )].slice(0, 8);
+            return relatedRoutes.length > 0 ? (
+              <section className="space-y-3">
+                <h2 className="text-xl font-semibold tracking-tight">
+                  Routes passing through {stopName}
+                </h2>
+                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {relatedRoutes.map((slug) => {
+                    const parts = slug.split('-to-');
+                    const fromName = toDisplayName(parts[0] ?? '');
+                    const toName = toDisplayName(parts[1] ?? '');
+                    return (
+                      <li key={slug}>
+                        <Link
+                          href={`/bus/${slug}`}
+                          className="text-sm text-brand-600 underline underline-offset-2 hover:text-brand-700"
+                        >
+                          {fromName} to {toName} bus timings
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ) : null;
+          })()}
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold tracking-tight">Search buses through {stopName}</h2>
