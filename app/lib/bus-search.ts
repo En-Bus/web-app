@@ -259,7 +259,7 @@ export async function fetchTripStops(
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}/trip-stops?${params.toString()}`, {
-      cache: 'no-store',
+      next: { revalidate: 604800 },
       signal: AbortSignal.timeout(8000),
     });
   } catch {
@@ -302,7 +302,7 @@ export async function fetchViaStops(
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}/via-stops?${params}`, {
-      cache: 'no-store',
+      next: { revalidate: 604800 },
       signal: AbortSignal.timeout(8000),
     });
   } catch {
@@ -342,7 +342,7 @@ export async function fetchSearchResults(
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}/search?${params.toString()}`, {
-      cache: 'no-store',
+      next: { revalidate: 604800 },
       signal: AbortSignal.timeout(8000),
     });
   } catch {
