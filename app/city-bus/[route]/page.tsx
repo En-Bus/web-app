@@ -140,7 +140,7 @@ export default async function CityBusRoutePage({
     .filter((d): d is string => d !== null);
   const medianDuration = durations.length > 0 ? (durations[Math.floor(durations.length / 2)] ?? null) : null;
 
-  if (!searchState.error && results.length < 5) {
+  if (searchState.error || results.length < 5) {
     notFound();
   }
 
@@ -179,22 +179,6 @@ export default async function CityBusRoutePage({
     { name: 'City Bus Routes', href: '/city-bus' },
     { name: `${fromName} to ${toName}` },
   ];
-
-  if (searchState.error) {
-    return (
-      <>
-        <Breadcrumb items={breadcrumbItems} />
-        <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {fromName} to {toName} MTC Bus Routes
-          </h1>
-          <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {searchState.error}
-          </p>
-        </main>
-      </>
-    );
-  }
 
   return (
     <>

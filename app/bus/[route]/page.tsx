@@ -165,7 +165,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     return s.includes('ac') || s.includes('volvo') || s.includes('sleeper');
   }).length;
 
-  if (!searchState.error && results.length < 3) {
+  if (searchState.error || results.length < 3) {
     notFound();
   }
 
@@ -209,22 +209,6 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     { name: 'Bus Routes', href: '/bus' },
     { name: `${fromName} to ${toName}` },
   ];
-
-  if (searchState.error) {
-    return (
-      <>
-        <Breadcrumb items={breadcrumbItems} />
-        <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {fromName} to {toName} Bus Timings
-          </h1>
-          <p className="mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {searchState.error}
-          </p>
-        </main>
-      </>
-    );
-  }
 
   return (
     <>
