@@ -571,7 +571,6 @@ export const VIA_STOP_SLUGS = [
   'kovilpatti',
   // Medium count (5–29 buses)
   'salem',
-  'erode',
   'karur',
   'usilampatti',
   'perundurai',
