@@ -140,7 +140,11 @@ export default async function CityBusRoutePage({
     .filter((d): d is string => d !== null);
   const medianDuration = durations.length > 0 ? (durations[Math.floor(durations.length / 2)] ?? null) : null;
 
-  if (searchState.error || results.length < 5) {
+  if (searchState.error) {
+    throw new Error(searchState.error);
+  }
+
+  if (results.length < 5) {
     notFound();
   }
 

@@ -165,7 +165,11 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     return s.includes('ac') || s.includes('volvo') || s.includes('sleeper');
   }).length;
 
-  if (searchState.error || results.length < 3) {
+  if (searchState.error) {
+    throw new Error(searchState.error);
+  }
+
+  if (results.length < 3) {
     notFound();
   }
 
