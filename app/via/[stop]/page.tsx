@@ -61,7 +61,10 @@ export default async function ViaStopPage({ params }: ViaStopPageProps) {
 
   const { data, error } = await fetchViaStops(stop);
 
-  if (error || !data || data.count === 0) {
+  if (error) {
+    throw new Error(error);
+  }
+  if (!data || data.count === 0) {
     notFound();
   }
 
