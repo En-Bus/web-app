@@ -290,7 +290,6 @@ export const SEO_ROUTE_SLUGS = [
   'rajapalayam-to-sankarankovil',
   'rajapalayam-to-kovilpatti',
   'rajapalayam-to-tenkasi',
-  'rajapalayam-to-virudhunagar',
   'rajapalayam-to-tiruppur',
   'rajapalayam-to-papanasam',
   'rajapalayam-to-chennai',
@@ -367,7 +366,6 @@ export const SEO_ROUTE_SLUGS = [
   'tiruthani-to-vellore',
   'arakkonam-to-kanchipuram',
   'arakkonam-to-sholingur',
-  'arakkonam-to-vellore',
   'arakkonam-to-chengalpattu',
   'arakkonam-to-tirupathi',
   'arakkonam-to-tiruthani',
@@ -432,8 +430,6 @@ export const SEO_ROUTE_SLUGS = [
   'pattukkottai-to-nagapattinam',
   'pattukkottai-to-karambakkudi',
   'pattukkottai-to-peravurani',
-  'pattukkottai-to-pudukkottai',
-  'thanjavur-to-lalgudi',
   // Tiruvarur / Mannargudi delta
   'tiruvarur-to-chennai',
   'tiruvarur-to-kumbakonam',
@@ -519,7 +515,6 @@ export const CITY_BUS_ROUTE_SLUGS = [
   'royapuram-to-tambaram',
   'tambaram-to-royapuram',
   'royapuram-to-kundrathur',
-  'kundrathur-to-royapuram',
   'tambaram-to-koyambedu',
   // Madurai city bus (maduraiguide.in data)
   'periyar-bus-stand-to-arappalayam',
