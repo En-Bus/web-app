@@ -477,16 +477,13 @@ export const SEO_ROUTE_SLUGS = [
   'somanur-to-palladam',
   // Mysore connections
   'mysore-to-erode',
-  'erode-to-mysore',
   // Kallakurichi
   'kallakurichi-to-bengaluru',
   // High-impression routes confirmed via GSC (position 8–11, no dedicated page)
   'trichy-to-erode',
   'krishnagiri-to-kuppam',
-  'erode-to-tiruvannamalai',
   'madurai-to-vilathikulam',
   'kumbakonam-to-karaikal',
-  'vellore-to-sholinganallur',
 ] as const;
 
 // Unique origin cities extracted from inter-city + city bus slugs.
