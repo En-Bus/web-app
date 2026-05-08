@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import type { SearchResponse, ViaStopsResponse, BusType } from './bus-search.js';
-import { buildBusRouteSlug } from './bus-search.js';
+import type { SearchResponse, ViaStopsResponse, BusType } from './bus-search';
+import { buildBusRouteSlug } from './bus-search';
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'fallback');
 

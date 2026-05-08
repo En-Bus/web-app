@@ -16,12 +16,10 @@ const CITY_ALIASES: [string, string][] = [
 ];
 
 const nextConfig: NextConfig = {
-  experimental: {
-    // Include pre-baked fallback JSON so Vercel bundles them with each serverless function.
-    // These are served when the Supabase API is unavailable (outage resilience).
-    outputFileTracingIncludes: {
-      '/**': ['./data/fallback/**'],
-    },
+  // Include pre-baked fallback JSON so Vercel bundles them with each serverless function.
+  // These are served when the Supabase API is unavailable (outage resilience).
+  outputFileTracingIncludes: {
+    '/**': ['./data/fallback/**'],
   },
   async redirects() {
     const rules: {

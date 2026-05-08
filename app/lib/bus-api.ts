@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { getFallbackSearch, getFallbackVia } from './fallback-search.js';
+import { getFallbackSearch, getFallbackVia } from './fallback-search';
 import {
   fetchSearchResults as _fetchSearchResults,
   fetchViaStops as _fetchViaStops,
@@ -9,7 +9,7 @@ import {
   type SearchResponse,
   type ViaStopsResponse,
   type TripStop,
-} from './bus-search.js';
+} from './bus-search';
 
 export type { BusType, SearchResponse, ViaStopsResponse, TripStop };
 export { fetchTripStops };
