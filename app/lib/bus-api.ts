@@ -21,7 +21,8 @@ export async function fetchSearchResults(
   type?: BusType,
 ): Promise<{ data: SearchResponse | null; error: string | null }> {
   const result = await _fetchSearchResults(fromSlug, toSlug, time, type);
-  if (result.error) {
+  const needsFallback = result.error || (result.data?.results.length ?? 0) < 3;
+  if (needsFallback) {
     const fallback = getFallbackSearch(fromSlug, toSlug, type);
     if (fallback) return { data: fallback, error: null };
   }
