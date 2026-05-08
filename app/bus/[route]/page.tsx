@@ -21,7 +21,7 @@ import { SearchResults } from '../../components/search-results';
 import { SEO_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 // Routes are ISR-generated on first request and cached for revalidate seconds.
 // Pre-building 400+ pages at deploy time caused Supabase API timeouts (23 concurrent workers).

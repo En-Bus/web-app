@@ -8,7 +8,7 @@ import { fetchViaStops, to12h, toDisplayName, normalizeSlug } from '../../lib/bu
 import { VIA_STOP_SLUGS, SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 // ISR on first request — pre-building all via pages at deploy time causes API timeouts.
 export function generateStaticParams() {

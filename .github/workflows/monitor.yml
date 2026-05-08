@@ -1,0 +1,28 @@
+name: API Monitor
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'  # every 15 min (GitHub may add up to 15 min delay)
+  workflow_dispatch:          # manual trigger for testing
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check API health
+        run: |
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 10 \
+            "${{ secrets.API_BASE_URL }}/search?from=chennai&to=madurai")
+          IST=$(TZ='Asia/Kolkata' date '+%H:%M IST')
+          if [ "$HTTP" != "200" ]; then
+            curl -s -X POST \
+              "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+              -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+              --data-urlencode "text=🔴 enbus.in API down (HTTP $HTTP) at $IST — https://status.supabase.com" \
+              > /dev/null
+            echo "API returned $HTTP — alert sent"
+            exit 1
+          fi
+          echo "API ok ($HTTP) at $IST"

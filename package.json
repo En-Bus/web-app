@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "check:routes": "tsx scripts/check-seo-routes.ts",
     "check:links": "linkinator https://enbus.in/sitemap.xml --timeout 15000 --verbosity error",
-    "warm-cache": "tsx scripts/warm-cache.ts"
+    "warm-cache": "tsx scripts/warm-cache.ts",
+    "build:fallback": "tsx scripts/build-fallback.ts"
   },
   "dependencies": {
     "next": "^16.2.6",

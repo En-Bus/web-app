@@ -17,7 +17,7 @@ import { SearchResults } from '../../components/search-results';
 import { CITY_BUS_ROUTE_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 // ISR on first request — same reason as /bus/[route]
 export function generateStaticParams() {
