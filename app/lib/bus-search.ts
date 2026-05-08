@@ -256,9 +256,15 @@ export async function fetchTripStops(
   tripId: string,
 ): Promise<{ stops: TripStop[] | null; error: string | null }> {
   const params = new URLSearchParams({ trip_id: tripId });
-  const response = await fetch(`${API_BASE_URL}/trip-stops?${params.toString()}`, {
-    next: { revalidate: 86400 },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/trip-stops?${params.toString()}`, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    return { stops: null, error: 'Trip stops API unavailable.' };
+  }
 
   if (!response.ok) {
     return { stops: null, error: `Trip stops request failed with status ${response.status}.` };
@@ -293,9 +299,16 @@ export async function fetchViaStops(
   stopSlug: string,
 ): Promise<{ data: ViaStopsResponse | null; error: string | null }> {
   const params = new URLSearchParams({ stop: slugToQuery(stopSlug) });
-  const response = await fetch(`${API_BASE_URL}/via-stops?${params}`, {
-    next: { revalidate: 86400 },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/via-stops?${params}`, {
+      next: { revalidate: 86400 },
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    return { data: null, error: 'Via stops API unavailable.' };
+  }
+
   if (!response.ok) {
     return { data: null, error: `Via stops request failed with status ${response.status}.` };
   }
@@ -326,9 +339,15 @@ export async function fetchSearchResults(
     params.set('type', type);
   }
 
-  const response = await fetch(`${API_BASE_URL}/search?${params.toString()}`, {
-    next: { revalidate: 900 },
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/search?${params.toString()}`, {
+      next: { revalidate: 900 },
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    return { data: null, error: 'Search API unavailable. Please try again shortly.' };
+  }
 
   if (!response.ok) {
     return {
