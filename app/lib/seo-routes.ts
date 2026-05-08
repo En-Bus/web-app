@@ -480,6 +480,7 @@ export const SEO_ROUTE_SLUGS = [
   // Kallakurichi
   'kallakurichi-to-bengaluru',
   // High-impression routes confirmed via GSC (position 8–11, no dedicated page)
+  'trichy-to-erode',
   'krishnagiri-to-kuppam',
   'madurai-to-vilathikulam',
   'kumbakonam-to-karaikal',
