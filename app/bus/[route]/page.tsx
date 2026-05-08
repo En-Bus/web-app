@@ -9,14 +9,13 @@ import {
   buildBusRouteSlug,
   calculateDuration,
   calculateFareRange,
-  fetchSearchResults,
-  fetchTripStops,
   formatStopName,
   normalizeSlug,
   parseBusRouteSlug,
   to12h,
   toDisplayName,
 } from '../../lib/bus-search';
+import { fetchSearchResults, fetchTripStops } from '../../lib/bus-api';
 import { SearchResults } from '../../components/search-results';
 import { SEO_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../../lib/seo-routes';
 

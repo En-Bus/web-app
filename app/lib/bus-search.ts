@@ -306,16 +306,10 @@ export async function fetchViaStops(
       signal: AbortSignal.timeout(8000),
     });
   } catch {
-    const { getFallbackVia } = await import('./fallback-search.js');
-    const fallback = getFallbackVia(stopSlug);
-    if (fallback) return { data: fallback, error: null };
     return { data: null, error: 'Via stops API unavailable.' };
   }
 
   if (!response.ok) {
-    const { getFallbackVia } = await import('./fallback-search.js');
-    const fallback = getFallbackVia(stopSlug);
-    if (fallback) return { data: fallback, error: null };
     return { data: null, error: `Via stops request failed with status ${response.status}.` };
   }
   try {
@@ -352,16 +346,10 @@ export async function fetchSearchResults(
       signal: AbortSignal.timeout(8000),
     });
   } catch {
-    const { getFallbackSearch } = await import('./fallback-search.js');
-    const fallback = getFallbackSearch(fromSlug, toSlug, type);
-    if (fallback) return { data: fallback, error: null };
     return { data: null, error: 'Search API unavailable. Please try again shortly.' };
   }
 
   if (!response.ok) {
-    const { getFallbackSearch } = await import('./fallback-search.js');
-    const fallback = getFallbackSearch(fromSlug, toSlug, type);
-    if (fallback) return { data: fallback, error: null };
     return {
       data: null,
       error: `Search request failed with status ${response.status}.`,

@@ -8,11 +8,11 @@ import { BreadcrumbJsonLd, BusRouteJsonLd, BusTripsJsonLd, FAQJsonLd } from '../
 import {
   buildBusRouteSlug,
   calculateDuration,
-  fetchSearchResults,
   parseBusRouteSlug,
   to12h,
   toDisplayName,
 } from '../../lib/bus-search';
+import { fetchSearchResults } from '../../lib/bus-api';
 import { SearchResults } from '../../components/search-results';
 import { CITY_BUS_ROUTE_SLUGS } from '../../lib/seo-routes';
 

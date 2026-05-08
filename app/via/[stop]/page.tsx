@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation';
 
 import { Breadcrumb } from '../../components/breadcrumb';
 import { FAQJsonLd } from '../../components/json-ld';
-import { fetchViaStops, to12h, toDisplayName, normalizeSlug } from '../../lib/bus-search';
+import { to12h, toDisplayName, normalizeSlug } from '../../lib/bus-search';
+import { fetchViaStops } from '../../lib/bus-api';
 import { VIA_STOP_SLUGS, SEO_ROUTE_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;

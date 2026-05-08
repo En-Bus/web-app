@@ -6,7 +6,6 @@ import { SearchForm } from '../components/search-form';
 import { SearchResults } from '../components/search-results';
 import { SearchEventTracker, SearchFeedback } from '../components/search-feedback';
 import {
-  fetchSearchResults,
   getParamValue,
   normalizeSlug,
   normalizeQuerySlug,
@@ -15,6 +14,7 @@ import {
   toDisplayName,
   type RawSearchParams,
 } from '../lib/bus-search';
+import { fetchSearchResults } from '../lib/bus-api';
 
 type SearchPageProps = {
   searchParams: Promise<RawSearchParams>;
