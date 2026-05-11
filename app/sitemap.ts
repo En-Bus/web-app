@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/city-bus`, changeFrequency: 'weekly', priority: 0.5, lastModified },
     { url: `${SITE_URL}/about`, changeFrequency: 'monthly', priority: 0.5, lastModified },
     { url: `${SITE_URL}/contribute`, changeFrequency: 'monthly', priority: 0.4, lastModified },
+    { url: `${SITE_URL}/buses-from`, changeFrequency: 'weekly', priority: 0.6, lastModified },
   ];
 
   for (const city of getHubCities()) {

@@ -164,6 +164,43 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     return s.includes('ac') || s.includes('volvo') || s.includes('sleeper');
   }).length;
 
+  const faqItems: { question: string; answer: string }[] = [
+    {
+      question: `How many government buses run from ${fromName} to ${toName}?`,
+      answer: `There are ${resultCount} TNSTC and SETC government buses operating from ${fromName} to ${toName}.`,
+    },
+    {
+      question: `What time is the first bus from ${fromName} to ${toName}?`,
+      answer: `The first bus from ${fromName} to ${toName} departs at ${firstBusLabel}.`,
+    },
+    {
+      question: `What time is the last bus from ${fromName} to ${toName}?`,
+      answer: `The last bus from ${fromName} to ${toName} departs at ${lastBusLabel}.`,
+    },
+    {
+      question: `What types of buses run from ${fromName} to ${toName}?`,
+      answer: `Bus types on this route include ${serviceBreakdownLabel}.`,
+    },
+    {
+      question: `Can I find buses that stop at ${fromName} or ${toName} mid-route?`,
+      answer: `Yes. enbus.in searches intermediate stops, so you can find buses even if ${fromName} or ${toName} is not the origin or terminus of the route.`,
+    },
+    ...(medianDuration ? [{
+      question: `How long does the journey from ${fromName} to ${toName} take?`,
+      answer: `The journey from ${fromName} to ${toName} typically takes around ${medianDuration}. Actual travel time may vary with boarding stops and traffic.`,
+    }] : []),
+    ...(fareRange ? [{
+      question: `What is the bus fare from ${fromName} to ${toName}?`,
+      answer: fareRange.min === fareRange.max
+        ? `The approximate bus fare from ${fromName} to ${toName} is ₹${fareRange.min}, based on official TNSTC rates.`
+        : `Bus fares from ${fromName} to ${toName} range from approximately ₹${fareRange.min} (Express) to ₹${fareRange.max} (AC/Ultra Deluxe), based on official TNSTC rates.`,
+    }] : []),
+    ...(acCount > 0 ? [{
+      question: `Are there AC buses from ${fromName} to ${toName}?`,
+      answer: `Yes, ${acCount} AC or Ultra Deluxe bus${acCount !== 1 ? 'es' : ''} run${acCount === 1 ? 's' : ''} from ${fromName} to ${toName}.`,
+    }] : []),
+  ];
+
   if (searchState.error) {
     throw new Error(searchState.error);
   }
@@ -329,6 +366,20 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           </div>
         </section>
 
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">
+            Frequently asked questions
+          </h2>
+          <dl className="space-y-4">
+            {faqItems.map((item, i) => (
+              <div key={i} className="space-y-1">
+                <dt className="text-sm font-medium text-neutral-900">{item.question}</dt>
+                <dd className="text-sm leading-6 text-neutral-600">{item.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
         <BusRouteJsonLd
           fromName={fromName}
           toName={toName}
@@ -353,44 +404,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           })}
         />
 
-        <FAQJsonLd
-          questions={[
-            {
-              question: `How many government buses run from ${fromName} to ${toName}?`,
-              answer: `There are ${resultCount} TNSTC and SETC government buses operating from ${fromName} to ${toName}.`,
-            },
-            {
-              question: `Can I find buses that stop at ${fromName} or ${toName} mid-route?`,
-              answer: `Yes. enbus.in searches intermediate stops, so you can find buses even if ${fromName} or ${toName} is not the origin or terminus.`,
-            },
-            {
-              question: `What time is the first bus from ${fromName} to ${toName}?`,
-              answer: `The first bus departs at ${firstBusLabel}.`,
-            },
-            {
-              question: `What time is the last bus from ${fromName} to ${toName}?`,
-              answer: `The last bus departs at ${lastBusLabel}.`,
-            },
-            {
-              question: `What types of buses run from ${fromName} to ${toName}?`,
-              answer: `Bus types include ${serviceBreakdownLabel}.`,
-            },
-            ...(medianDuration ? [{
-              question: `How long does the journey from ${fromName} to ${toName} take?`,
-              answer: `The journey from ${fromName} to ${toName} typically takes around ${medianDuration}. Actual travel time may vary with boarding stops and traffic.`,
-            }] : []),
-            ...(fareRange ? [{
-              question: `What is the bus fare from ${fromName} to ${toName}?`,
-              answer: fareRange.min === fareRange.max
-                ? `The approximate bus fare from ${fromName} to ${toName} is ₹${fareRange.min}, based on official TNSTC rates.`
-                : `Bus fares from ${fromName} to ${toName} range from approximately ₹${fareRange.min} (Express) to ₹${fareRange.max} (AC/Ultra Deluxe), based on official TNSTC rates.`,
-            }] : []),
-            ...(acCount > 0 ? [{
-              question: `Are there AC buses from ${fromName} to ${toName}?`,
-              answer: `Yes, ${acCount} AC or Ultra Deluxe bus${acCount !== 1 ? 'es' : ''} run${acCount === 1 ? 's' : ''} from ${fromName} to ${toName}.`,
-            }] : []),
-          ]}
-        />
+        <FAQJsonLd questions={faqItems} />
 
         <section className="space-y-3">
           <h2 className="text-xl font-semibold tracking-tight">

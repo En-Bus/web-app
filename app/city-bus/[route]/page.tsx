@@ -140,6 +140,33 @@ export default async function CityBusRoutePage({
     .filter((d): d is string => d !== null);
   const medianDuration = durations.length > 0 ? (durations[Math.floor(durations.length / 2)] ?? null) : null;
 
+  const faqItems: { question: string; answer: string }[] = [
+    {
+      question: `How many MTC buses run from ${fromName} to ${toName}?`,
+      answer: `There are ${resultCount} MTC city bus routes from ${fromName} to ${toName} in Chennai.`,
+    },
+    {
+      question: `What time is the first bus from ${fromName} to ${toName}?`,
+      answer: `The first bus departs at ${firstBusLabel}.`,
+    },
+    {
+      question: `What time is the last bus from ${fromName} to ${toName}?`,
+      answer: `The last bus departs at ${lastBusLabel}.`,
+    },
+    {
+      question: `What types of buses run from ${fromName} to ${toName}?`,
+      answer: `Bus types include ${serviceBreakdownLabel}.`,
+    },
+    {
+      question: `Can I find MTC buses stopping at ${fromName} mid-route?`,
+      answer: `Yes. enbus.in searches intermediate stops, so you can find MTC buses even if ${fromName} is not the first or last stop.`,
+    },
+    ...(medianDuration ? [{
+      question: `How long does the journey from ${fromName} to ${toName} take by MTC bus?`,
+      answer: `The MTC bus journey from ${fromName} to ${toName} typically takes around ${medianDuration}. Travel time varies with traffic.`,
+    }] : []),
+  ];
+
   if (searchState.error) {
     throw new Error(searchState.error);
   }
@@ -270,34 +297,21 @@ export default async function CityBusRoutePage({
 
         <BreadcrumbJsonLd items={breadcrumbItems} />
 
-        <FAQJsonLd
-          questions={[
-            {
-              question: `How many MTC buses run from ${fromName} to ${toName}?`,
-              answer: `There are ${resultCount} MTC city bus routes from ${fromName} to ${toName} in Chennai.`,
-            },
-            {
-              question: `Can I find MTC buses stopping at ${fromName} mid-route?`,
-              answer: `Yes. enbus.in searches intermediate stops, so you can find MTC buses even if ${fromName} is not the first or last stop.`,
-            },
-            {
-              question: `What time is the first bus from ${fromName} to ${toName}?`,
-              answer: `The first bus departs at ${firstBusLabel}.`,
-            },
-            {
-              question: `What time is the last bus from ${fromName} to ${toName}?`,
-              answer: `The last bus departs at ${lastBusLabel}.`,
-            },
-            {
-              question: `What types of buses run from ${fromName} to ${toName}?`,
-              answer: `Bus types include ${serviceBreakdownLabel}.`,
-            },
-            ...(medianDuration ? [{
-              question: `How long does the journey from ${fromName} to ${toName} take by MTC bus?`,
-              answer: `The MTC bus journey from ${fromName} to ${toName} typically takes around ${medianDuration}. Travel time varies with traffic.`,
-            }] : []),
-          ]}
-        />
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold tracking-tight">
+            Frequently asked questions
+          </h2>
+          <dl className="space-y-4">
+            {faqItems.map((item, i) => (
+              <div key={i} className="space-y-1">
+                <dt className="text-sm font-medium text-neutral-900">{item.question}</dt>
+                <dd className="text-sm leading-6 text-neutral-600">{item.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <FAQJsonLd questions={faqItems} />
 
         {seoSuggestions.length > 0 && (
           <section className="space-y-3">
