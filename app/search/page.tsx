@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { SearchForm } from '../components/search-form';
+import { GamePromo } from '../components/game-promo';
 import { SearchResults } from '../components/search-results';
 import { SearchEventTracker, SearchFeedback } from '../components/search-feedback';
 import {
@@ -162,6 +163,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               type="city"
             />
           </section>
+        ) : null}
+
+        {canSearch && hasAnyResults && !error && !isSelfRoute ? (
+          <GamePromo
+            fromSlug={normalizedFrom}
+            toSlug={normalizedTo}
+            placement="search_results"
+          />
         ) : null}
 
         {canSearch && !hasAnyResults && !error && !isSelfRoute ? (
