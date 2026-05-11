@@ -52,7 +52,7 @@ describe('GamePromo runtime teaser', () => {
     const { container } = render(<GamePromo placement="search_after_next_bus" inList />);
 
     await screen.findByRole('link', { name: /play today's solputhir puzzle on google play/i });
-    expect(container.querySelector('li.list-none')).toBeTruthy();
+    expect(container.querySelector('div.list-none')).toBeTruthy();
   });
 
   it('hides cleanly when the runtime fetch fails', async () => {

@@ -173,9 +173,5 @@ export function GamePromo({ placement, inList = false }: GamePromoProps) {
     </a>
   );
 
-  if (inList) {
-    return <li className="list-none">{card}</li>;
-  }
-
-  return card;
+  return inList ? <div className="list-none">{card}</div> : card;
 }

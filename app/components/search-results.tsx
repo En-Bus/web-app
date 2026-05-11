@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { cloneElement, isValidElement, useEffect, useState } from 'react';
 
 import {
   calculateDuration,
@@ -240,7 +240,11 @@ export function SearchResults({
               );
 
               if (promoSlot && index === (nextBusIndex >= 0 ? nextBusIndex : 0)) {
-                items.push(promoSlot);
+                items.push(
+                  isValidElement(promoSlot)
+                    ? cloneElement(promoSlot, { key: 'game-promo' })
+                    : <li key="game-promo">{promoSlot}</li>,
+                );
               }
             }
 

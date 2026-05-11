@@ -29,8 +29,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-white text-neutral-900 antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
         {process.env.NODE_ENV === 'production' && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
