@@ -18,6 +18,7 @@ type SearchResultsProps = {
   results: SearchResult[];
   showSeoLink?: boolean;
   type?: BusType;
+  promoSlot?: React.ReactNode;
 };
 
 function getTimeBand(time: string): string {
@@ -95,6 +96,7 @@ export function SearchResults({
   results,
   showSeoLink = true,
   type,
+  promoSlot,
 }: SearchResultsProps) {
   const seoPrefix = type === 'city' ? '/city-bus' : '/bus';
   const seoHref = `${seoPrefix}/${fromSlug}-to-${toSlug}`;
@@ -233,6 +235,12 @@ export function SearchResults({
                   </div>
                 </li>,
               );
+
+              if (promoSlot && index === (nextBusIndex >= 0 ? nextBusIndex : 0)) {
+                items.push(
+                  <li key="game-promo">{promoSlot}</li>,
+                );
+              }
             }
 
             return items;

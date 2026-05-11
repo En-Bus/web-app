@@ -17,6 +17,7 @@ import {
 } from '../../lib/bus-search';
 import { fetchSearchResults, fetchTripStops } from '../../lib/bus-api';
 import { SearchResults } from '../../components/search-results';
+import { GamePromo } from '../../components/game-promo';
 import { SEO_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;
@@ -289,6 +290,13 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           toSlug={toSlug}
           results={searchState.data?.results ?? []}
           showSeoLink={false}
+          promoSlot={
+            <GamePromo
+              fromSlug={fromSlug}
+              toSlug={toSlug}
+              placement="route_after_next_bus"
+            />
+          }
         />
 
         <div className="flex flex-col gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">

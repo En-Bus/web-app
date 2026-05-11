@@ -145,6 +145,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               results={interCityState.data?.results ?? []}
               showSeoLink
               type="inter-city"
+              promoSlot={
+                <GamePromo
+                  fromSlug={normalizedFrom}
+                  toSlug={normalizedTo}
+                  placement="search_after_next_bus"
+                />
+              }
             />
           </section>
         ) : null}
@@ -163,14 +170,6 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               type="city"
             />
           </section>
-        ) : null}
-
-        {canSearch && hasAnyResults && !error && !isSelfRoute ? (
-          <GamePromo
-            fromSlug={normalizedFrom}
-            toSlug={normalizedTo}
-            placement="search_results"
-          />
         ) : null}
 
         {canSearch && !hasAnyResults && !error && !isSelfRoute ? (

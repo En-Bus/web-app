@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-type GamePromoPlacement = 'search_results';
+type GamePromoPlacement = 'search_after_next_bus' | 'route_after_next_bus';
 
 type GamePromoProps = {
   fromSlug: string;
