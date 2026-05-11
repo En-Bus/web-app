@@ -19,6 +19,7 @@ type SearchResultsProps = {
   showSeoLink?: boolean;
   type?: BusType;
   promoSlot?: React.ReactNode;
+  currentTimeMins?: number;
 };
 
 function getTimeBand(time: string): string {
@@ -97,17 +98,19 @@ export function SearchResults({
   showSeoLink = true,
   type,
   promoSlot,
+  currentTimeMins,
 }: SearchResultsProps) {
   const seoPrefix = type === 'city' ? '/city-bus' : '/bus';
   const seoHref = `${seoPrefix}/${fromSlug}-to-${toSlug}`;
   const canShowSeoLink = showSeoLink && results.length > 0;
 
   // Client-side current time for "Next bus" highlight
-  const [nowMins, setNowMins] = useState<number | null>(null);
+  const [nowMins, setNowMins] = useState<number | null>(currentTimeMins ?? null);
   useEffect(() => {
+    if (typeof currentTimeMins === 'number') return;
     const d = new Date();
     setNowMins(d.getHours() * 60 + d.getMinutes());
-  }, []);
+  }, [currentTimeMins]);
 
   const nextBusIndex = results.findIndex((r) => {
     if (nowMins === null) return false;
@@ -237,9 +240,7 @@ export function SearchResults({
               );
 
               if (promoSlot && index === (nextBusIndex >= 0 ? nextBusIndex : 0)) {
-                items.push(
-                  <li key="game-promo">{promoSlot}</li>,
-                );
+                items.push(promoSlot);
               }
             }
 

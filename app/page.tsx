@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { SearchForm } from './components/search-form';
+import { GamePromo } from './components/game-promo';
 import { PreLaunch } from './components/pre-launch';
 import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS } from './lib/seo-routes';
 import { parseBusRouteSlug, toDisplayName } from './lib/bus-search';
@@ -92,6 +93,10 @@ export default async function HomePage() {
         </section>
 
         <SearchForm />
+
+        <section className="space-y-3">
+          <GamePromo placement="home_after_search" />
+        </section>
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">

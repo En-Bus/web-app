@@ -1,68 +1,72 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 
 import { GamePromo } from '../app/components/game-promo';
 
-describe('GamePromo', () => {
+describe('GamePromo runtime teaser', () => {
   beforeEach(() => {
-    window.localStorage.clear();
     delete (window as any).gtag;
+    vi.restoreAllMocks();
   });
 
-  it('renders one of the promo variants when not dismissed', async () => {
-    render(
-      <GamePromo
-        fromSlug="chennai"
-        toSlug="madurai"
-        placement="search_results"
-      />,
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('link', { name: /play store-ல் திறக்க|விளையாடத் தொடங்கு/i }),
-      ).toBeInTheDocument();
-    });
-  });
-
-  it('hides itself after dismiss and persists that choice', async () => {
-    render(
-      <GamePromo
-        fromSlug="trichy"
-        toSlug="salem"
-        placement="search_results"
-      />,
-    );
-
-    const dismissButton = await screen.findByRole('button', { name: /dismiss solputhir promo/i });
-    fireEvent.click(dismissButton);
-
-    expect(window.localStorage.getItem('enbus-game-promo-dismissed-v1')).toBe('1');
-    expect(screen.queryByRole('button', { name: /dismiss solputhir promo/i })).not.toBeInTheDocument();
-  });
-
-  it('tracks promo clicks with gtag when available', async () => {
-    const gtag = vi.fn();
-    (window as any).gtag = gtag;
-
-    render(
-      <GamePromo
-        fromSlug="erode"
-        toSlug="coimbatore"
-        placement="search_results"
-      />,
-    );
-
-    const cta = await screen.findByRole('link', { name: /play store-ல் திறக்க|விளையாடத் தொடங்கு/i });
-    fireEvent.click(cta);
-
-    expect(gtag).toHaveBeenCalledWith(
-      'event',
-      'game_promo_click',
-      expect.objectContaining({
-        placement: 'search_results',
-        from_slug: 'erode',
-        to_slug: 'coimbatore',
+  it('hydrates puzzle tiles, date, and CTA from the IndieEgg JSON payload', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          scrambledLetters: ['சொ', 'ல்', 'பு', 'தி', 'ர்'],
+          date: '2026-05-11',
+          ctaUrl: 'https://play.google.com/store/apps/details?id=com.solputhir.daily&ref=indieegg',
+        }),
       }),
     );
+
+    render(<GamePromo placement="home_after_search" />);
+
+    const link = await screen.findByRole('link', { name: /play today's solputhir puzzle on google play/i });
+    expect(link).toHaveAttribute(
+      'href',
+      'https://play.google.com/store/apps/details?id=com.solputhir.daily&ref=indieegg',
+    );
+    expect(screen.getByText('11 May 2026')).toBeInTheDocument();
+    expect(screen.getByText('Solve in app')).toBeInTheDocument();
+    expect(screen.getByText('சொ')).toBeInTheDocument();
+
+    const tilesRow = screen.getByTestId('solputhir-tiles');
+    expect(tilesRow.className).toContain('flex-nowrap');
+  });
+
+  it('renders as a list item when used inside search results', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          scrambledLetters: ['அ', 'ம்', 'மா'],
+          date: '2026-05-11',
+          ctaUrl: 'https://play.google.com/store/apps/details?id=com.solputhir.daily',
+        }),
+      }),
+    );
+
+    const { container } = render(<GamePromo placement="search_after_next_bus" inList />);
+
+    await screen.findByRole('link', { name: /play today's solputhir puzzle on google play/i });
+    expect(container.querySelector('li.list-none')).toBeTruthy();
+  });
+
+  it('hides cleanly when the runtime fetch fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+      }),
+    );
+
+    const { container } = render(<GamePromo placement="route_after_next_bus" />);
+
+    await waitFor(() => {
+      expect(container).toBeEmptyDOMElement();
+    });
   });
 });

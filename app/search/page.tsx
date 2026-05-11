@@ -16,6 +16,7 @@ import {
   type RawSearchParams,
 } from '../lib/bus-search';
 import { fetchSearchResults } from '../lib/bus-api';
+import { getTamilNaduCurrentMinutes } from '../lib/current-time';
 
 type SearchPageProps = {
   searchParams: Promise<RawSearchParams>;
@@ -101,6 +102,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const hasCityBus = Boolean(cityState.data?.results?.length);
   const hasAnyResults = hasInterCity || hasCityBus;
   const error = interCityState.error || cityState.error;
+  const currentTimeMins = getTamilNaduCurrentMinutes();
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
@@ -145,11 +147,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               results={interCityState.data?.results ?? []}
               showSeoLink
               type="inter-city"
+              currentTimeMins={currentTimeMins}
               promoSlot={
                 <GamePromo
-                  fromSlug={normalizedFrom}
-                  toSlug={normalizedTo}
                   placement="search_after_next_bus"
+                  inList
                 />
               }
             />
@@ -168,6 +170,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               results={cityState.data?.results ?? []}
               showSeoLink
               type="city"
+              currentTimeMins={currentTimeMins}
             />
           </section>
         ) : null}

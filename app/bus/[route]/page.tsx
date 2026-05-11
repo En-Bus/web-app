@@ -18,6 +18,7 @@ import {
 import { fetchSearchResults, fetchTripStops } from '../../lib/bus-api';
 import { SearchResults } from '../../components/search-results';
 import { GamePromo } from '../../components/game-promo';
+import { getTamilNaduCurrentMinutes } from '../../lib/current-time';
 import { SEO_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../../lib/seo-routes';
 
 export const dynamicParams = true;
@@ -250,6 +251,7 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
     { name: 'Bus Routes', href: '/bus' },
     { name: `${fromName} to ${toName}` },
   ];
+  const currentTimeMins = getTamilNaduCurrentMinutes();
 
   return (
     <>
@@ -290,11 +292,11 @@ export default async function BusRoutePage({ params }: BusRoutePageProps) {
           toSlug={toSlug}
           results={searchState.data?.results ?? []}
           showSeoLink={false}
+          currentTimeMins={currentTimeMins}
           promoSlot={
             <GamePromo
-              fromSlug={fromSlug}
-              toSlug={toSlug}
               placement="route_after_next_bus"
+              inList
             />
           }
         />
