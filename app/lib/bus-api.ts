@@ -21,6 +21,14 @@ export async function fetchSearchResults(
   type?: BusType,
 ): Promise<{ data: SearchResponse | null; error: string | null }> {
   const result = await _fetchSearchResults(fromSlug, toSlug, time, type);
+
+  // Filter out results with missing times (00:00:00 placeholder in DB)
+  if (result.data?.results) {
+    result.data.results = result.data.results.filter(
+      (r) => (r.boards_at && r.boards_at !== '00:00:00') || (r.departs_at && r.departs_at !== '00:00:00')
+    );
+  }
+
   const needsFallback = result.error || (result.data?.results.length ?? 0) < 3;
   if (needsFallback) {
     const fallback = getFallbackSearch(fromSlug, toSlug, type);
