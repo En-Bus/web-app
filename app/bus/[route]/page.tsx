@@ -71,17 +71,15 @@ export async function generateMetadata({
     };
   }
 
-  const year = new Date().getFullYear();
-
   return {
-    title: `${fromName} to ${toName} Bus — Timings & Stops (${year})`,
-    description: `Find government buses from ${fromName} to ${toName} with departure times, stops, and TNSTC & SETC services. Updated for ${year}.`,
+    title: `${fromName} to ${toName} Bus Timings — Schedule & Fares`,
+    description: `Check ${fromName} to ${toName} bus schedules, timings, operators, and fares. Find all TNSTC & SETC services with intermediate stops.`,
     alternates: {
       canonical: `/bus/${route}`,
     },
     openGraph: {
-      title: `${fromName} to ${toName} Bus Timings — TNSTC & SETC`,
-      description: `Find TNSTC & SETC buses from ${fromName} to ${toName} with intermediate stops.`,
+      title: `${fromName} to ${toName} Bus Timings — Schedule & Fares`,
+      description: `Check ${fromName} to ${toName} bus schedules, timings, operators, and fares. Find all TNSTC & SETC services with intermediate stops.`,
     },
   };
 }
