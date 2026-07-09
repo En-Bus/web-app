@@ -5,6 +5,7 @@ import './globals.css';
 import { SiteHeader } from './components/site-header';
 import { SiteFooter } from './components/site-footer';
 import { WebSiteJsonLd, OrganizationJsonLd } from './components/json-ld';
+import { AdsenseHeadTag } from './components/adsense-head';
 import { SITE_URL } from './lib/site-url';
 
 const GA_ID = (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-7Y3T74TKPG').trim();
@@ -25,15 +26,13 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
   },
-  other: {
-    'google-adsense-account': 'ca-pub-1115352628293702',
-  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
+        <AdsenseHeadTag />
         {process.env.NODE_ENV === 'production' && (
           <>
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
