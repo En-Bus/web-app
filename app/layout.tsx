@@ -25,14 +25,14 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
   },
+  other: {
+    'google-adsense-account': 'ca-pub-1115352628293702',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="google-adsense-account" content="ca-pub-1115352628293702" />
-      </head>
       <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
         {process.env.NODE_ENV === 'production' && (
           <>
