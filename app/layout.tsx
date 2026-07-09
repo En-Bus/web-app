@@ -25,9 +25,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary',
   },
-  verification: {
-    google: 'ca-pub-1115352628293702',
-  } as any,
+  other: {
+    'google-adsense-account': 'ca-pub-1115352628293702',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
