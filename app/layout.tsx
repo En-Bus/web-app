@@ -31,14 +31,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
-        <Script id="adsense-setup" strategy="afterInteractive">{`
-          let meta = document.querySelector('meta[name="google-adsense-account"]');
-          if (!meta) {
-            meta = document.createElement('meta');
+        <Script id="adsense-setup" strategy="beforeInteractive">{`
+          (function(){
+            var meta = document.createElement('meta');
             meta.name = 'google-adsense-account';
             meta.content = 'ca-pub-1115352628293702';
             document.head.appendChild(meta);
-          }
+          })();
         `}</Script>
         {process.env.NODE_ENV === 'production' && (
           <>
