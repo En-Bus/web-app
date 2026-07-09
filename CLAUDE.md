@@ -65,8 +65,21 @@ The README.md in this repo is unrelated (it's a Supabase CLI readme, not project
 
 Do NOT run after: code changes (seo-routes.ts edits, UI fixes, bug fixes), or multiple rapid deploys in one session.
 
+## Non-live validation rule (production safety)
+
+**Git hooks, CI scripts, and local validation tools MUST NEVER call the live production Supabase API directly.** They validate against local/fallback data only:
+- `data/fallback/*.json` (committed snapshots, regenerated via `npm run build:fallback` after data updates)
+- Local Supabase instance (`supabase start`)
+- Hardcoded test data
+
+**Only the actual deploy step (or an explicit, manual `--live` mode run right after regenerating fallback data) hits production.** This applies to all hooks and scripts — the Disk IO Budget depletion incident (2026-07) was caused by a pre-push hook silently firing hundreds of uncached RPC calls on every push. Future scripts should default to the safe (local-only) pattern.
+
 ## check-seo-routes requirements
 
-The script (`scripts/check-seo-routes.ts`) sends `time=00:00` to match the production page which always fetches with `time='00:00'` (all-day results). Without this, late-night runs return artificially low result counts. Also note:
+The script (`scripts/check-seo-routes.ts`) **defaults to validating against `data/fallback/*.json`** (zero network calls). A `--live` flag is available for manual verification right after `npm run build:fallback` regenerates the snapshots.
+
+Additional notes on `time=00:00` and canonical slugs:
+- Pre-push hook / default mode validates locally against committed fallback snapshots (no time param needed).
+- `--live` mode (manual use only) sends `time=00:00` to match production behavior (all-day results).
 - Use canonical city slugs (e.g. `tiruchirappalli-to-erode`, not `trichy-to-erode`) — `next.config.ts` redirects colloquials to canonical forms, and `seo-routes.ts` must use the canonical (post-redirect) slug.
-- Verify any newly failing route with `curl .../search?from=X&to=Y&type=inter-city&time=00:00` before removing it.
+- After shipping a data update (`npm run build:fallback && npm run warm-cache`), verify locally with `npm run check:routes:live` before pushing.

@@ -3,44 +3,72 @@
  * check-seo-routes.ts
  *
  * Validates every slug in SEO_ROUTE_SLUGS and CITY_BUS_ROUTE_SLUGS
- * returns at least 3 results from the search API (matches the page's notFound threshold).
+ * returns at least 3 results (matches the page's notFound threshold).
  *
- * Exit 1 if any routes return fewer than 3 results (would 404 on production).
+ * DEFAULT: Validates against committed fallback data (data/fallback/*.json) — zero network calls.
+ * This is what the pre-push hook runs.
  *
- * Run:  npx tsx scripts/check-seo-routes.ts
- * Hook: installed as a pre-push git hook to prevent broken routes shipping
+ * --live: Validates against the live production API. Use manually after regenerating fallback data
+ * to confirm the fallback snapshots are accurate. Example:
+ *   npm run build:fallback  # regenerate from live API
+ *   npm run check:routes:live  # verify the freshly-generated snapshots
  *
- * Uses the production API by default; override with CHECK_API_BASE_URL env var.
+ * Run:  npx tsx scripts/check-seo-routes.ts [--live]
+ * Hook: installed as a pre-push git hook; runs in default (local) mode to prevent broken routes shipping
+ *
+ * Exit 1 if any routes return fewer than 3 results (would 404 in production).
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
 import { SEO_ROUTE_SLUGS, CITY_BUS_ROUTE_SLUGS, VIA_STOP_SLUGS } from '../app/lib/seo-routes.ts';
 
-const API_BASE =
-  process.env.CHECK_API_BASE_URL ??
-  process.env.NEXT_PUBLIC_SEARCH_API_BASE_URL ??
-  'https://hopivdsbzzfklohyllut.supabase.co/functions/v1/api';
+const USE_LIVE = process.argv.includes('--live');
+const API_BASE = USE_LIVE
+  ? (process.env.CHECK_API_BASE_URL ??
+      process.env.NEXT_PUBLIC_SEARCH_API_BASE_URL ??
+      'https://hopivdsbzzfklohyllut.supabase.co/functions/v1/api')
+  : '';
 
+const FALLBACK_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/fallback');
 const CONCURRENCY = 3;
-const DELAY_MS = 300; // Supabase Edge Functions throttle under high concurrency
+const DELAY_MS = 300;
 
-function slugToQuery(slug: string): string {
-  return slug.replace(/-+/g, ' ').trim();
+type FallbackData = Record<string, { results?: unknown[] }>;
+
+let fallbackData: {
+  interCity: FallbackData;
+  cityBus: FallbackData;
+  via: FallbackData;
+} = { interCity: {}, cityBus: {}, via: {} };
+
+function loadFallbackData() {
+  if (USE_LIVE) return;
+
+  try {
+    const interCityPath = path.join(FALLBACK_DIR, 'inter-city.json');
+    const cityBusPath = path.join(FALLBACK_DIR, 'city-bus.json');
+    const viaPath = path.join(FALLBACK_DIR, 'via.json');
+
+    if (!fs.existsSync(interCityPath)) throw new Error(`Missing ${interCityPath}`);
+    if (!fs.existsSync(cityBusPath)) throw new Error(`Missing ${cityBusPath}`);
+    if (!fs.existsSync(viaPath)) throw new Error(`Missing ${viaPath}`);
+
+    fallbackData.interCity = JSON.parse(fs.readFileSync(interCityPath, 'utf-8')) as FallbackData;
+    fallbackData.cityBus = JSON.parse(fs.readFileSync(cityBusPath, 'utf-8')) as FallbackData;
+    fallbackData.via = JSON.parse(fs.readFileSync(viaPath, 'utf-8')) as FallbackData;
+  } catch (err) {
+    console.error('Failed to load fallback data:', err);
+    process.exit(1);
+  }
 }
 
-function parseBusRouteSlug(slug: string): { from: string; to: string } | null {
-  const parts = slug.split('-to-');
-  if (parts.length !== 2) return null;
-  const from = slugToQuery(parts[0] ?? '');
-  const to = slugToQuery(parts[1] ?? '');
-  if (!from || !to) return null;
-  return { from, to };
-}
+async function checkSlugLive(slug: string, type: 'inter-city' | 'city'): Promise<boolean> {
+  const from = slug.split('-to-')[0]?.replace(/-+/g, ' ').trim();
+  const to = slug.split('-to-')[1]?.replace(/-+/g, ' ').trim();
+  if (!from || !to) return false;
 
-async function checkSlug(slug: string, type: 'inter-city' | 'city'): Promise<boolean> {
-  const parsed = parseBusRouteSlug(slug);
-  if (!parsed) return false;
-
-  const params = new URLSearchParams({ from: parsed.from, to: parsed.to, type, time: '00:00' });
+  const params = new URLSearchParams({ from, to, type, time: '00:00' });
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const res = await fetch(`${API_BASE}/search?${params}`, {
@@ -59,6 +87,17 @@ async function checkSlug(slug: string, type: 'inter-city' | 'city'): Promise<boo
   return false;
 }
 
+function checkSlugLocal(slug: string, type: 'inter-city' | 'city'): boolean {
+  const data = type === 'city' ? fallbackData.cityBus : fallbackData.interCity;
+  const entry = data[slug];
+  if (!entry) return false;
+  return (entry.results?.length ?? 0) >= 3;
+}
+
+async function checkSlug(slug: string, type: 'inter-city' | 'city'): Promise<boolean> {
+  return USE_LIVE ? checkSlugLive(slug, type) : checkSlugLocal(slug, type);
+}
+
 async function runWithConcurrency<T>(
   items: T[],
   concurrency: number,
@@ -75,7 +114,7 @@ async function runWithConcurrency<T>(
   await Promise.all(workers);
 }
 
-async function checkViaSlug(slug: string): Promise<boolean> {
+async function checkViaSlugLive(slug: string): Promise<boolean> {
   const stopName = slug.replace(/-+/g, ' ').trim();
   const params = new URLSearchParams({ stop: stopName });
   try {
@@ -90,14 +129,27 @@ async function checkViaSlug(slug: string): Promise<boolean> {
   }
 }
 
+function checkViaSlugLocal(slug: string): boolean {
+  const entry = fallbackData.via[slug];
+  if (!entry) return false;
+  return (entry.results?.length ?? 0) > 0;
+}
+
+async function checkViaSlug(slug: string): Promise<boolean> {
+  return USE_LIVE ? checkViaSlugLive(slug) : checkViaSlugLocal(slug);
+}
+
 async function main() {
+  loadFallbackData();
+
   const interCitySlugs = [...SEO_ROUTE_SLUGS];
   const cityBusSlugs = [...CITY_BUS_ROUTE_SLUGS];
   const viaStopSlugs = [...VIA_STOP_SLUGS];
   const total = interCitySlugs.length + cityBusSlugs.length + viaStopSlugs.length;
 
+  const mode = USE_LIVE ? 'live API' : 'local fallback data';
   console.log(`Checking ${interCitySlugs.length} inter-city + ${cityBusSlugs.length} city bus + ${viaStopSlugs.length} via-stop routes...`);
-  console.log(`API: ${API_BASE}\n`);
+  console.log(`Source: ${mode}\n`);
 
   const broken: string[] = [];
   let checked = 0;
@@ -107,7 +159,7 @@ async function main() {
     checked++;
     if (!ok) {
       broken.push(`/${type === 'city' ? 'city-bus' : 'bus'}/${slug}`);
-      process.stdout.write(`  FAIL: /bus/${slug}\n`);
+      process.stdout.write(`  FAIL: /${type === 'city' ? 'city-bus' : 'bus'}/${slug}\n`);
     } else {
       process.stdout.write(`  [${checked}/${total}] OK: ${slug}\r`);
     }
