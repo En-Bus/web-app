@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { redirect, headers } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 import { SearchForm } from '../components/search-form';
@@ -19,12 +19,6 @@ import { fetchSearchResults } from '../lib/bus-api';
 import { getTamilNaduCurrentMinutes } from '../lib/current-time';
 
 export const revalidate = 300; // 5-minute ISR cache
-
-export async function generateHeaders() {
-  return {
-    'Cache-Control': 'public, max-age=300, s-maxage=300',
-  };
-}
 
 type SearchPageProps = {
   searchParams: Promise<RawSearchParams>;
