@@ -18,6 +18,8 @@ import {
 import { fetchSearchResults } from '../lib/bus-api';
 import { getTamilNaduCurrentMinutes } from '../lib/current-time';
 
+export const revalidate = 300; // 5-minute ISR cache, allows Cloudflare/browser caching
+
 type SearchPageProps = {
   searchParams: Promise<RawSearchParams>;
 };
