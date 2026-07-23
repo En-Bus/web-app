@@ -31,16 +31,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {process.env.NODE_ENV === 'production' && (
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1115352628293702" crossOrigin="anonymous"></script>
+        )}
+      </head>
       <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
         <AdsenseHeadTag />
         {process.env.NODE_ENV === 'production' && (
           <>
-            <Script
-              async
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1115352628293702"
-              crossOrigin="anonymous"
-              strategy="beforeInteractive"
-            />
             <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
             <Script id="ga-init" strategy="afterInteractive">{`
               if(!localStorage.getItem('ga_opt_out')){
