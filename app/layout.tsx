@@ -32,9 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {process.env.NODE_ENV === 'production' && (
-          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1115352628293702" crossOrigin="anonymous"></script>
-        )}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1115352628293702" crossOrigin="anonymous"></script>
       </head>
       <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
         <AdsenseHeadTag />
