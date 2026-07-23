@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1115352628293702" crossOrigin="anonymous"></script>
+        <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1115352628293702" crossOrigin="anonymous" />
       </head>
       <body className="bg-white text-neutral-900 antialiased" suppressHydrationWarning>
         <AdsenseHeadTag />
